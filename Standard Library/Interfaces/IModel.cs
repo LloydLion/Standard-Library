@@ -5,7 +5,8 @@ using System.Text;
 
 namespace Standard_Library.Interfaces
 {
-    public interface IModel : INotifyPropertyChanging, INotifyPropertyChanged
+    public interface IModel : INotifyPropertyChanging, INotifyPropertyChanged, ICloneable, 
+        IDisposable, INumberIndicatedObject, IDisposedInformator
     {
 
     }
