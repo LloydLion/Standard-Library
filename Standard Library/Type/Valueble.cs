@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Standard_Library.TypeManagment
+namespace StandardLibrary.TypeManagment
 {
     public class Valueble<T> where T : class, ICloneable
     {

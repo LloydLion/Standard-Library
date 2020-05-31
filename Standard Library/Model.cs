@@ -1,11 +1,11 @@
-﻿using Standard_Library.Interfaces;
+﻿using StandardLibrary.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Standard_Library
+namespace StandardLibrary
 {
     public abstract class Model : IModel
     {

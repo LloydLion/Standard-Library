@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Standard_Library;
-using Standard_Library.Functions;
+using StandardLibrary;
+using StandardLibrary.Functions;
 using System.Linq;
 
 namespace Unit_Test_Project

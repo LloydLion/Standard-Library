@@ -1,10 +1,10 @@
-﻿using Standard_Library.Interfaces;
+﻿using StandardLibrary.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Standard_Library
+namespace StandardLibrary
 {
     public class NamedList<T> : List<T>, INamedList<T> where T : INamedObject  
     {

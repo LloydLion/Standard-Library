@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Standard_Library.Interfaces
+namespace StandardLibrary.Interfaces
 {
     public interface INamedCollection<T> : ICollection<T>, IReadOnlyCollection<T>, ICollection where T : INamedObject
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Standard_Library.Interfaces
+namespace StandardLibrary.Interfaces
 {
     public interface IPrivateNamedObject
     {

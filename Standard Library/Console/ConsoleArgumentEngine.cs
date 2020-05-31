@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Standard_Library.Console
+namespace StandardLibrary.Console
 {
     public class ConsoleArgumentEngine
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Standard_Library.Functions
+namespace StandardLibrary.Functions
 {
     public class FunctionStepper<TResult>
     {
