@@ -9,6 +9,10 @@ namespace Standard_Library.Functions
         List<Func<TResult>> steps = new List<Func<TResult>>();
         int iterator = 0;
         bool voidReturned = typeof(TResult) == typeof(StepperVoid);
+        TResult mainResult;
+        bool mainReturned;
+
+        public FunctionStepperStepResult<TResult> Result { get; private set; }
 
         public void CreateStep(Func<TResult> func)
         {
@@ -30,11 +34,34 @@ namespace Standard_Library.Functions
             voidReturned = true;
         }
 
+        public void ReturnMainResult(TResult value)
+        {
+            if (!mainReturned)
+            {
+                mainResult = value;
+                mainReturned = true;
+            }
+            else
+                throw new InvalidOperationException("Main result has already returned");
+        }
+
         public FunctionStepperStepResult<TResult> DoNextStep()
         {
             var r = DoStep(iterator);
             iterator++;
             return r;
+        }
+
+        public FunctionStepperStepResult<TResult> ExecuteAllSteps(out FunctionStepperStepResult<TResult>[] results)
+        {
+            results = new FunctionStepperStepResult<TResult>[steps.Count];
+            for (; HasNextStep(); iterator++)
+            {
+                results[iterator] = DoStep(iterator);
+
+            }
+
+            return Result;
         }
 
         public bool HasNextStep() => steps.Count - 1 > iterator;
@@ -55,6 +82,8 @@ namespace Standard_Library.Functions
 
             return r;
         }
+
+
 
         public class FunctionStepperStepResult<T>
         {
