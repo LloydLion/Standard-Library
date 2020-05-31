@@ -12,7 +12,7 @@ namespace StandardLibrary.Console
         private FlagParameter[] flags;
         private KeyParameter[] keys;
 
-        public ConsoleArgumentEngine(Parameter[] parameters)
+        public ConsoleArgumentEngine(params Parameter[] parameters)
         {
             this.parameters = parameters;
 
