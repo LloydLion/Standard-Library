@@ -38,9 +38,11 @@ namespace Unit_Test_Project
 
             ).Calculate(args);
 
+
+
             Assert.AreEqual(121, (int)result["pos1int"], $"res:{(int)result["pos1int"]}, act:121");
             Assert.AreEqual(true, (bool)result["pos2bool"], $"res:{(bool)result["pos2bool"]}, act:true");
-            Assert.AreEqual(421.311, (float)result["pos3float"],0.001 ,$"res:{(float)result["pos3float"]}, act:421,311");
+            Assert.AreEqual(421.311, (float)result["pos3float"], 0.001, $"res:{(float)result["pos3float"]}, act:421,311");
 
             Assert.AreEqual(true, (bool)result["flag1"], $"res:{(bool)result["flag1"]}, act:true");
             Assert.AreEqual(false, (bool)result["flag2"], $"res:{(bool)result["flag2"]}, act:false");
