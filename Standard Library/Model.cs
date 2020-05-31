@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Standard_Library.Classes
+namespace Standard_Library
 {
     public abstract class Model : IModel
     {
