@@ -5,14 +5,12 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace StandardLibrary
+namespace StandardLibrary.Models
 {
     public abstract class Model : IModel
     {
 
         private static int nextId = 0;
-        private bool disposed = false;
-
 
         protected Model()
         {
@@ -23,12 +21,12 @@ namespace StandardLibrary
 
         ~Model()
         {
-            if(!disposed) Dispose();
+            if(!Disposed) Dispose();
         }
 
 
         public int Id { get; }
-        public bool Disposed { get; }
+        public bool Disposed { get; private set; } = false;
 
 
         public event PropertyChangingEventHandler PropertyChanging;
@@ -43,6 +41,7 @@ namespace StandardLibrary
         
 
         public abstract object Clone();
-        public virtual void Dispose() { disposed = true; }
+        
+        public virtual void Dispose() { Disposed = true; }
     }
 }

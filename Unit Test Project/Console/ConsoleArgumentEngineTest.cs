@@ -4,7 +4,7 @@ using StandardLibrary.Console;
 using StandardLibrary.Functions;
 using System.Linq;
 
-namespace Unit_Test_Project
+namespace TestProject.Console
 {
     [TestClass]
     public class ConsoleArgumentEngineTest

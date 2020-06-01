@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace StandardLibrary
+namespace StandardLibrary.Collections
 {
     public class NamedList<T> : List<T>, INamedList<T> where T : INamedObject  
     {

@@ -3,7 +3,7 @@ using StandardLibrary;
 using StandardLibrary.Functions;
 using System.Linq;
 
-namespace Unit_Test_Project
+namespace TestProject.Functions
 {
 	[TestClass]
 	public class FunctionStepperTest
