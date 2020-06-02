@@ -50,5 +50,63 @@ namespace TestProject.Console
             Assert.AreEqual("AAA", (string)result["param1str"], $"res:{(string)result["param1str"]}, act:AAA");
             Assert.AreEqual(123, (int)result["param2int"], $"res:{(int)result["param2int"]}, act:123");
         }
+
+        [TestMethod]
+        public void RequiredPropertyKeyArgTest()
+        {
+            var args = "--keyR 121".Split(' ');
+            var result = new ConsoleArgumentEngine
+            (
+                new ConsoleArgumentEngine.KeyParameter()
+                {
+                    Name = "keyR",
+                    ParseFunc = (s) => int.Parse(s),
+                    Key = "keyR",
+                    IsRequired = true
+                },
+
+                new ConsoleArgumentEngine.KeyParameter()
+                {
+                    Name = "keyNR",
+                    ParseFunc = (s) => int.Parse(s),
+                    Key = "keyNR",
+                    IsRequired = false
+                }
+
+            ).Calculate(args);
+
+            Assert.AreEqual(121, (int)result["keyR"], $"keyR:{result["keyR"]}");
+            Assert.AreEqual(false, result.ContainsKey("keyNR"), 
+                $"keyNRContains:{result.ContainsKey("keyNR")}");
+        }
+
+        [TestMethod]
+        public void RequiredPropertyPositionArgTest()
+        {
+            var args = "121".Split(' ');
+            var result = new ConsoleArgumentEngine
+            (
+                new ConsoleArgumentEngine.PositionParameter()
+                {
+                    Name = "keyR",
+                    ParseFunc = (s) => int.Parse(s),
+                    Position = 0,
+                    IsRequired = true
+                },
+
+                new ConsoleArgumentEngine.PositionParameter()
+                {
+                    Name = "keyNR",
+                    ParseFunc = (s) => int.Parse(s),
+                    Position = 1,
+                    IsRequired = false
+                }
+
+            ).Calculate(args);
+
+            Assert.AreEqual(121, (int)result["keyR"], $"keyR:{result["keyR"]}");
+            Assert.AreEqual(false, result.ContainsKey("keyNR"),
+                $"keyNRContains:{result.ContainsKey("keyNR")}");
+        }
     }
 }

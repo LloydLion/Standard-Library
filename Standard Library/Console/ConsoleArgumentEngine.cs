@@ -7,15 +7,24 @@ namespace StandardLibrary.Console
 {
     public class ConsoleArgumentEngine
     {
-        private Parameter[] parameters;
-        private PositionParameter[] positions;
-        private FlagParameter[] flags;
-        private KeyParameter[] keys;
+        public const string ParameterMemberHasInvalidTypeExcceptionMessage = 
+            "Parameter member has invalid type";
+
+
+        public const string ParameterIsNotHasAllKeysExcceptionMessage =
+            "Parameter is not has all keys";
+
+        public const string ParameterIsNotHasAllPositionParametersExcceptionMessage =
+            "Parameter is not has all position parameters";
+
+
+
+        private readonly PositionParameter[] positions;
+        private readonly FlagParameter[] flags;
+        private readonly KeyParameter[] keys;
 
         public ConsoleArgumentEngine(params Parameter[] parameters)
         {
-            this.parameters = parameters;
-
             positions = parameters.Where((s) => s.GetType() == typeof(PositionParameter))
                 .Cast<PositionParameter>().ToArray();
 
@@ -24,37 +33,80 @@ namespace StandardLibrary.Console
 
             keys = parameters.Where((s) => s.GetType() == typeof(KeyParameter))
                 .Cast<KeyParameter>().ToArray();
+
+            if (positions.Length + flags.Length + keys.Length != parameters.Length)
+                throw new ArgumentException(nameof(parameters),
+                    ParameterMemberHasInvalidTypeExcceptionMessage);
         }
 
         public Dictionary<string, object> Calculate(string[] args)
         {
             var dic = new Dictionary<string, object>();
+            List<int> indexL = new List<int>();
 
             try
-            {
-                dic = dic.Concat
-                (positions.Select((s) => new KeyValuePair<string, object>(s.Name, s.ParseFunc(args[s.Position]))))
+            {    
+                dic = dic.Concat(positions.Select((s, i) =>
+                {
+                    if (args.Length - 1 >= s.Position)
+                    {
+
+                        return new KeyValuePair<string, object>
+                            (s.Name, s.ParseFunc(args[s.Position]));
+                    }
+                    else
+                    {
+
+                        if (s.IsRequired)
+                            throw new IndexOutOfRangeException("Trigger exception");
+                        else
+                        {
+                            indexL.Add(i);
+                            return default;
+                        }
+                    }
+                })).Where((s, i) => !indexL.Contains(i))
                 .ToDictionary((s) => s.Key, (s) => s.Value);
             }
             catch (IndexOutOfRangeException)
             {
-                throw new ArgumentException(nameof(args), "Args is not has all postion parameters");
+                throw new ArgumentException(nameof(args), 
+                    ParameterIsNotHasAllPositionParametersExcceptionMessage);
             }
 
             try
             {
-                dic = dic.Concat
-                (keys.Select((s) => new KeyValuePair<string, object>(s.Name, s.ParseFunc
-                    (args[args.ToList().IndexOf("--" + s.Key) + 1])))).ToDictionary((s) => s.Key, (s) => s.Value);
+                indexL.Clear();
+                dic = dic.Concat(keys.Select((s, i) =>
+                {
+                    if (!args.Contains("--" + s.Key))
+                    {
+                        if (s.IsRequired)
+                            throw new IndexOutOfRangeException("Trigger exception");
+                        else
+                        {
+                            indexL.Add(i);
+                            return default;
+                        }
+                    }
+                    else
+                    {
+                        return new KeyValuePair<string, object>(s.Name, s.ParseFunc
+                            (args[args.ToList().IndexOf("--" + s.Key) + 1]));
+                    }
+
+                })).Where((s, i) => !indexL.Contains(i))
+                .ToDictionary((s) => s.Key, (s) => s.Value);
             }
             catch(IndexOutOfRangeException)
             {
-                throw new ArgumentException(nameof(args), "Args is not has all keys");
+                throw new ArgumentException(nameof(args), ParameterIsNotHasAllKeysExcceptionMessage);
             }
 
             dic = dic.Concat
-            (flags.Select((s) => new KeyValuePair<string, object>(s.Name, args.Contains("--" + s.Key))))
-            .ToDictionary((s) => s.Key, (s) => s.Value);
+                (flags.Select((s) => new KeyValuePair<string, object>
+                (s.Name, args.Contains("--" + s.Key))))
+                .ToDictionary((s) => s.Key, (s) => s.Value);
 
             return dic;
         }
@@ -65,6 +117,7 @@ namespace StandardLibrary.Console
         {
             public virtual Func<string, object> ParseFunc { get; set; }
             public string Name { get; set; }
+            public virtual bool IsRequired { get; set; }
         }
 
         public class PositionParameter : Parameter
@@ -79,10 +132,19 @@ namespace StandardLibrary.Console
 
         public class FlagParameter : Parameter
         {
+            public const string ReadOnlyPropertyExceptionMessage = 
+                "It is readonly property";
+
             public override Func<string, object> ParseFunc 
             { 
                 get => (s) => bool.Parse(s); 
-                set => throw new InvalidOperationException("It is readonly property"); 
+                set => throw new InvalidOperationException(ReadOnlyPropertyExceptionMessage); 
+            }
+
+            public override bool IsRequired 
+            { 
+                get => false; 
+                set => throw new InvalidOperationException(ReadOnlyPropertyExceptionMessage); 
             }
 
             public string Key { get; set; }
