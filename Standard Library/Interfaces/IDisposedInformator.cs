@@ -6,6 +6,9 @@ namespace StandardLibrary.Interfaces
 {
     public interface IDisposedInformator
     {
-        bool Disposed { get; }
+        bool IsDisposed { get; }
+
+        event EventHandler Disposing;
+        event EventHandler Disposed;
     }
 }

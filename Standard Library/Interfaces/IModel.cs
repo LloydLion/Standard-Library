@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Standard_Library.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
@@ -6,7 +7,8 @@ using System.Text;
 namespace StandardLibrary.Interfaces
 {
     public interface IModel : INotifyPropertyChanging, INotifyPropertyChanged, ICloneable, 
-        IDisposable, INumberIndicatedObject, IDisposedInformator
+        IDisposable, INumberIndicatedObject, IDisposedInformator, IFormattable, IPropertyFormattable, 
+        ISupportInitializeNotification
     {
 
     }

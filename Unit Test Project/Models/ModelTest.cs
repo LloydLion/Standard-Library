@@ -93,12 +93,12 @@ namespace TestProject.Models
             };
 
             Assert.AreEqual(obj.Resource, true, $"(1) Resource:{obj.Resource}");
-            Assert.AreEqual(obj.Disposed, false, $"(1) Disposed:{obj.Disposed}");
+            Assert.AreEqual(obj.IsDisposed, false, $"(1) Disposed:{obj.IsDisposed}");
 
             obj.Dispose();
 
             Assert.AreEqual(obj.Resource, false, $"(2) Resource:{obj.Resource}");
-            Assert.AreEqual(obj.Disposed, true, $"(2) Disposed:{obj.Disposed}");
+            Assert.AreEqual(obj.IsDisposed, true, $"(2) Disposed:{obj.IsDisposed}");
         }
 
 
