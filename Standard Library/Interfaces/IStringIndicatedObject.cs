@@ -6,6 +6,6 @@ namespace StandardLibrary.Interfaces
 {
     public interface IStringIndicatedObject
     {
-        string Id { get; }
+        string StringId { get; }
     }
 }
