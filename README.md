@@ -16,3 +16,9 @@ you mustn't connect module to project.
 This library requireds:
 
 ...none?...
+
+
+# Licence
+
+UnLicense:
+<https://unlicense.org>
