@@ -1,27 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace StandardLibrary.Functions
 {
-    public class FunctionStepper<TResult>
+    public class FunctionStepper<TResult> : FunctionStepper<TResult>.IFunctionStepperExecutor
     {
-        List<Func<TResult>> steps = new List<Func<TResult>>();
-        int iterator = 0;
-        bool voidReturned = typeof(TResult) == typeof(StepperVoid);
-        TResult mainResult;
-        bool mainReturned;
+        public const string StepReturnsVoidResultExceptionMessage = 
+            "Step returns void result";
+        
+        public const string MainResultHasAlreadyReturnedExceptionMessage =
+            "Main result has already returned";
 
-        public FunctionStepperStepResult<TResult> Result { get; private set; }
+        public const string AllStepsExecutedExceptionMessage =
+            "All steps executed";
+
+
+        private readonly List<StepInfo> steps;
+        private int iterator = 0;
+        private bool voidReturned = typeof(TResult) == typeof(StepperVoid);
+        private TResult mainResult;
+        private bool mainReturned;
+
+
+        public FunctionStepperStepResult Result =>
+            mainReturned ? new FunctionStepperStepResult(mainResult) :
+                new FunctionStepperStepResult();
+
+        public bool HasNextStep => steps.Count - 1 > iterator;
+
+        public IFunctionStepperExecutor Executor => this;
+
 
         public void CreateStep(Func<TResult> func)
         {
-            steps.Add(func);
+            steps.Add(new StepInfo() { Step = func });
         }
 
         public void CreateSteps(params Func<TResult>[] funcs)
         {
-            steps.AddRange(funcs);
+            steps.AddRange(funcs.Select((s) => new StepInfo() { Step = s }).ToArray());
         }
 
         /// <summary>
@@ -34,6 +53,11 @@ namespace StandardLibrary.Functions
             voidReturned = true;
         }
 
+        public void SkipNextStep()
+        {
+            iterator++;
+        }
+
         public void ReturnMainResult(TResult value)
         {
             if (!mainReturned)
@@ -42,20 +66,20 @@ namespace StandardLibrary.Functions
                 mainReturned = true;
             }
             else
-                throw new InvalidOperationException("Main result has already returned");
+                throw new InvalidOperationException(MainResultHasAlreadyReturnedExceptionMessage);
         }
 
-        public FunctionStepperStepResult<TResult> DoNextStep()
+        public FunctionStepperStepResult DoNextStep()
         {
             var r = DoStep(iterator);
             iterator++;
             return r;
         }
 
-        public FunctionStepperStepResult<TResult> ExecuteAllSteps(out FunctionStepperStepResult<TResult>[] results)
+        public FunctionStepperStepResult ExecuteAllSteps(out FunctionStepperStepResult[] results)
         {
-            results = new FunctionStepperStepResult<TResult>[steps.Count];
-            for (; HasNextStep(); iterator++)
+            results = new FunctionStepperStepResult[steps.Count];
+            for (; HasNextStep; iterator++)
             {
                 results[iterator] = DoStep(iterator);
 
@@ -64,28 +88,32 @@ namespace StandardLibrary.Functions
             return Result;
         }
 
-        public bool HasNextStep() => steps.Count - 1 > iterator;
+        public FunctionStepperStepResult ExecuteAllSteps() => ExecuteAllSteps(out var _);
 
-        private FunctionStepperStepResult<TResult> DoStep(int i)
+        private FunctionStepperStepResult DoStep(int i)
         {
-            if (steps.Count - 1 < i) throw new InvalidOperationException("Executed all steps");
+            if (steps.Count - 1 < i) throw new InvalidOperationException(AllStepsExecutedExceptionMessage);
 
-            FunctionStepperStepResult<TResult> r;
-            var val = steps[i].Invoke();
+            FunctionStepperStepResult r;
+            var val = steps[i].Step.Invoke();
             if (voidReturned == true)
-                r = new FunctionStepperStepResult<TResult>();
+                r = new FunctionStepperStepResult();
             else
-                r = new FunctionStepperStepResult<TResult>(val);
+                r = new FunctionStepperStepResult(val);
 
-            if (typeof(TResult) == typeof(StepperVoid)) voidReturned = true;
-            else voidReturned = false;
+            voidReturned = typeof(TResult) == typeof(StepperVoid);
 
             return r;
         }
 
 
+        private class StepInfo
+        {
+            public Func<TResult> Step { get; set; }
+            public bool IsVoidReturn { get; set; }
+        }
 
-        public class FunctionStepperStepResult<T>
+        public class FunctionStepperStepResult
         {
             /// <summary>
             /// Invoke if returned a void
@@ -96,22 +124,39 @@ namespace StandardLibrary.Functions
                 IsVoid = true;
             }
 
-            public FunctionStepperStepResult(T result)
+            public FunctionStepperStepResult(TResult result)
             {
                 Result = result;
                 IsVoid = false;
             }
 
-            public T Result { get { if (IsVoid == true) throw new InvalidOperationException("Step returns void result");
-                            else return result; } private set => result = value; }
-            private T result;
+            public TResult Result
+            {
+                get
+                {
+                    if (IsVoid == true) throw new InvalidOperationException();
+                    else return result;
+                }
+                private set => result = value;
+            }
+            private TResult result;
 
             public bool IsVoid { get; private set; }
 
 
-            public static implicit operator T(FunctionStepperStepResult<T> value) => value.Result;
+            public static implicit operator TResult(FunctionStepperStepResult value) => value.Result;
+        }
+
+        public interface IFunctionStepperExecutor
+        {
+            FunctionStepperStepResult ExecuteAllSteps();
+            FunctionStepperStepResult ExecuteAllSteps(out FunctionStepperStepResult[] results);
+            FunctionStepperStepResult DoNextStep();
+
+            FunctionStepperStepResult Result { get; }
+            bool HasNextStep { get; }
         }
     }
 
-    public class StepperVoid { }
+    public sealed class StepperVoid { private StepperVoid() { } }
 }

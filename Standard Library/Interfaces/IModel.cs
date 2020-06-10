@@ -1,4 +1,4 @@
-﻿using Standard_Library.Interfaces;
+﻿using StandardLibrary.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

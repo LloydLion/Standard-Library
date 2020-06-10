@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Standard_Library.ProcessManagment
+namespace StandardLibrary.ProcessManagment
 {
     public class ConsoleProcessEngine
     {
