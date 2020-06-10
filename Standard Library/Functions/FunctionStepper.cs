@@ -150,10 +150,14 @@ namespace StandardLibrary.Functions
         public interface IFunctionStepperExecutor
         {
             FunctionStepperStepResult ExecuteAllSteps();
+
             FunctionStepperStepResult ExecuteAllSteps(out FunctionStepperStepResult[] results);
+
             FunctionStepperStepResult DoNextStep();
 
+
             FunctionStepperStepResult Result { get; }
+
             bool HasNextStep { get; }
         }
     }
