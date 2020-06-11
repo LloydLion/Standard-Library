@@ -22,8 +22,8 @@ namespace StandardLibrary.Functions
 
 
 
-		private readonly List<StepInfo> steps;
-		private readonly List<FunctionStepperStepResult> results;
+		private readonly List<StepInfo> steps = new List<StepInfo>();
+		private readonly List<FunctionStepperStepResult> results = new List<FunctionStepperStepResult>();
 		private int iterator = 0;
 		private bool voidReturned = typeof(TResult) == typeof(StepperVoid);
 		private TResult mainResult;
@@ -100,6 +100,16 @@ namespace StandardLibrary.Functions
 			return Result;
 		}
 
+		public FunctionStepperStepResult ExecuteAndWaitAllSteps(out FunctionStepperStepResult[] results)
+		{
+			var tmp = ExecuteAllSteps(out results);
+			WaitAllStepsTasks();
+
+			return tmp;
+		}
+
+		public FunctionStepperStepResult ExecuteAndWaitAllSteps() => ExecuteAndWaitAllSteps(out var _);
+
 		public FunctionStepperStepResult ExecuteAllSteps() => ExecuteAllSteps(out var _);
 
 		public FunctionStepperStepResult WaitPreviousStepTask()
@@ -130,6 +140,14 @@ namespace StandardLibrary.Functions
 				throw new InvalidOperationException(StepIsNotAsyncExecutableExceptionMessage);
 
 			results[index].AsyncResult.Wait();
+			return results[index];
+		}
+
+		public FunctionStepperStepResult GetStepResult(int index)
+		{
+			if (index < 0 || index > results.Count - 1) 
+				throw new ArgumentOutOfRangeException(nameof(index));
+
 			return results[index];
 		}
 
@@ -248,6 +266,16 @@ namespace StandardLibrary.Functions
 			FunctionStepperStepResult ExecuteAllSteps(out FunctionStepperStepResult[] results);
 
 			FunctionStepperStepResult DoNextStep();
+
+			FunctionStepperStepResult ExecuteAndWaitAllSteps(out FunctionStepperStepResult[] results);
+
+			FunctionStepperStepResult ExecuteAndWaitAllSteps();
+
+			FunctionStepperStepResult WaitPreviousStepTask();
+
+			FunctionStepperStepResult[] WaitAllStepsTasks();
+
+			FunctionStepperStepResult WaitStepTaskByIndex(int index);
 
 
 			FunctionStepperStepResult Result { get; }
