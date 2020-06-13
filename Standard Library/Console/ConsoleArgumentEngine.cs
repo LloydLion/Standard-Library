@@ -33,6 +33,12 @@ namespace StandardLibrary.Console
         private readonly FlagParameter[] flags;
         private readonly KeyParameter[] keys;
 
+        /// <summary>
+        ///     
+        ///     Creates new ArgumentEngine with given parameters
+        /// 
+        /// </summary>
+        /// <param name="parameters">Arguments</param>
         public ConsoleArgumentEngine(params Parameter[] parameters)
         {
             positions = parameters.Where((s) => s.GetType() == typeof(PositionParameter))
@@ -100,6 +106,22 @@ namespace StandardLibrary.Console
             #endregion
         }
 
+
+        /// <summary>
+        /// 
+        ///     Calculets arguments dictionary from args
+        ///     Exemple:
+        ///     
+        ///     static Main(string[] args)
+        ///     {
+        ///         ...
+        ///         var arguments = engine.Calculate(args);
+        ///         ...
+        ///     }
+        /// 
+        /// </summary>
+        /// <param name="args">Input string array</param>
+        /// <returns>Parsed arguments dictionary</returns>
         public Dictionary<string, object> Calculate(string[] args)
         {
             var dic = new Dictionary<string, object>();
@@ -180,40 +202,113 @@ namespace StandardLibrary.Console
 
 
 
+        /// <summary>
+        /// 
+        ///     Base class for any parameter
+        /// 
+        /// </summary>
         public abstract class Parameter
         {
+            /// <summary>
+            /// 
+            ///     Parsing function
+            /// 
+            /// </summary>
             public virtual Func<string, object> ParseFunc { get; set; }
+
+            /// <summary>
+            /// 
+            ///     Parameter name in output dictionary
+            /// 
+            /// </summary>
             public string Name { get; set; }
+
+            /// <summary>
+            /// 
+            ///     Set in false to make the parameter isn't required
+            ///     Default: required (true value)
+            /// 
+            /// </summary>
             public virtual bool IsRequired { get; set; }
         }
 
+        /// <summary>
+        /// 
+        ///     Class for Postion parameter
+        /// 
+        /// </summary>
         public class PositionParameter : Parameter
-        { 
+        {
+            /// <summary>
+            /// 
+            ///     Position of parameter
+            ///     Exemple: program.exe 321    ASd    true
+            ///                          ^pos:0 ^pos:1 ^pos:2
+            /// 
+            /// </summary>
             public int Position { get; set; }
         }
 
+        /// <summary>
+        /// 
+        ///     Class for parameters with key
+        ///     Exemple: program.exe --key value --key2 --value2
+        /// 
+        /// </summary>
         public class KeyParameter : Parameter
         {
+            /// <summary>
+            /// 
+            ///     Parameter key
+            /// 
+            /// </summary>
             public string Key { get; set; }
         }
 
+        /// <summary>
+        /// 
+        ///     Class for flag parameter
+        ///     Exemple: program.exe --flag1 --flag2
+        ///     Analog with KeyParameter: program.exe --flag1 true --flag2 true
+        ///     *If flag not exist false value will be inserted 
+        ///         into the output dictionary on Calculate(string[])
+        /// 
+        /// </summary>
         public class FlagParameter : Parameter
         {
             public const string ReadOnlyPropertyExceptionMessage = 
                 "It is readonly property";
 
+            public const string UnreadeblePropertyExceptionMessage =
+                "It is unreadeble property";
+
+            /// <summary>
+            /// 
+            ///     Unsuported Property
+            /// 
+            /// </summary>
             public override Func<string, object> ParseFunc 
             { 
-                get => (s) => bool.Parse(s); 
+                get => throw new InvalidOperationException(UnreadeblePropertyExceptionMessage); 
                 set => throw new InvalidOperationException(ReadOnlyPropertyExceptionMessage); 
             }
 
+            /// <summary>
+            /// 
+            ///     Unsuported Property
+            /// 
+            /// </summary>
             public override bool IsRequired 
             { 
-                get => false; 
+                get => throw new InvalidOperationException(UnreadeblePropertyExceptionMessage); 
                 set => throw new InvalidOperationException(ReadOnlyPropertyExceptionMessage); 
             }
 
+            /// <summary>
+            /// 
+            ///     Parameter flag
+            /// 
+            /// </summary>
             public string Key { get; set; }
         }
     }
