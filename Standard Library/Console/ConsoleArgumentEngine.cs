@@ -279,6 +279,9 @@ namespace StandardLibrary.Console
             public const string ReadOnlyPropertyExceptionMessage = 
                 "It is readonly property";
 
+            public const string UnreadeblePropertyExceptionMessage =
+                "It is unreadeble property";
+
             /// <summary>
             /// 
             ///     Unsuported Property
@@ -286,16 +289,26 @@ namespace StandardLibrary.Console
             /// </summary>
             public override Func<string, object> ParseFunc 
             { 
-                get => (s) => bool.Parse(s); 
+                get => throw new InvalidOperationException(UnreadeblePropertyExceptionMessage); 
                 set => throw new InvalidOperationException(ReadOnlyPropertyExceptionMessage); 
             }
 
+            /// <summary>
+            /// 
+            ///     Unsuported Property
+            /// 
+            /// </summary>
             public override bool IsRequired 
             { 
-                get => false; 
+                get => throw new InvalidOperationException(UnreadeblePropertyExceptionMessage); 
                 set => throw new InvalidOperationException(ReadOnlyPropertyExceptionMessage); 
             }
 
+            /// <summary>
+            /// 
+            ///     Parameter flag
+            /// 
+            /// </summary>
             public string Key { get; set; }
         }
     }
