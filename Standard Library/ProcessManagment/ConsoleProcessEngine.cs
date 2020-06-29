@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,8 +23,19 @@ namespace StandardLibrary.ProcessManagment
         private StreamWriter Writer { get => process.StandardInput; }
         private StreamReader Reader { get => process.StandardOutput; }
 
+        /// <summary>
+        /// 
+        ///     Returns process status
+        /// 
+        /// </summary>
         public bool Running { get; private set; }
 
+        /// <summary>
+        /// 
+        ///     Creates a new inctance and bind his with process start info
+        /// 
+        /// </summary>
+        /// <param name="processStartInfo">Process bind</param>
         public ConsoleProcessEngine(ProcessStartInfo processStartInfo)
         {
 
@@ -40,6 +52,15 @@ namespace StandardLibrary.ProcessManagment
             }
         }
 
+        /// <summary>
+        /// 
+        ///     Reads segment from application output
+        ///     Only if process running
+        /// 
+        /// </summary>
+        /// <param name="startMark">Start reading string</param>
+        /// <param name="endMark">Stop reading string</param>
+        /// <returns>Reading result, without start and end masks</returns>
         public string ReadConsoleSegment(string startMark, string endMark)
         {
             CheckProcessStade();
@@ -80,7 +101,17 @@ namespace StandardLibrary.ProcessManagment
             return s;
         }
 
-        public Task StartAsync(string startedMark)
+        /// <summary>
+        /// 
+        ///     Launch process !sync with main thread
+        ///     but wait async for app init
+        /// 
+        /// </summary>
+        /// <param name="startedMark">Init mask, if it will be found in app output, then
+        ///     the application is considered to be running</param>
+        ///     
+        /// <returns>Awaiter</returns>
+        public TaskAwaiter StartAsync(string startedMark)
         {
             Start();
 
@@ -89,35 +120,57 @@ namespace StandardLibrary.ProcessManagment
                 StringBuilder builder = new StringBuilder();
                 while (builder.ToString().EndsWith(startedMark))
                     builder.Append((char)Reader.Read());
-            });
+            }).GetAwaiter();
         }
 
+        /// <summary>
+        /// 
+        ///     Simple process start
+        /// 
+        /// </summary>
         public void Start()
         {
             process.Start();
             Running = true;
         }
 
+        /// <summary>
+        /// 
+        ///     Kill the running process
+        /// 
+        /// </summary>
         public void KillProcess()
         {
+            CheckProcessStade();
             process.Kill();
             Running = false;
         }
 
-        public Task StopAsync(string stopCommand, int waitTime = int.MaxValue)
+        /// <summary>
+        /// 
+        ///     Stops process with sending in input stream stop command and async wait his termenate
+        /// 
+        /// </summary>
+        /// <param name="stopCommand">Command for stop</param>
+        /// <param name="waitTime">Max process terminating </param>
+        /// <returns>Process termenate awaiter</returns>
+        public TaskAwaiter StopAsync(string stopCommand, int waitTime = int.MaxValue)
         {
+            CheckProcessStade();
             WriteCommand(stopCommand);
 
-            return Task.Run(() => { process.WaitForExit(waitTime); Running = false; });
-        }
-        
-        public void Stop(string stopCommand, int waitTime = int.MaxValue)
-        {
-            StopAsync(stopCommand, waitTime).Wait();
+            return Task.Run(() => { process.WaitForExit(waitTime); Running = false; }).GetAwaiter();
         }
 
+        /// <summary>
+        /// 
+        ///     Write command in app input 
+        /// 
+        /// </summary>
+        /// <param name="command">Command to write</param>
         public void WriteCommand(string command)
         {
+            CheckProcessStade();
             Writer.WriteLine(command);
         }
 
