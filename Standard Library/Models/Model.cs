@@ -14,18 +14,26 @@ namespace StandardLibrary.Models
 
         private static int nextId = 0;
 
-
+        /// <summary>
+        /// 
+        ///     Inits a Model inctance
+        /// 
+        /// </summary>
         protected Model()
         {
             Id = nextId;
             nextId++;
         }
 
+        /// <summary>
+        /// 
+        ///     Dispose the object
+        /// 
+        /// </summary>
         ~Model()
         {
             if (!IsDisposed) Dispose();
         }
-
 
         public int Id { get; private set; }
         public bool IsDisposed { get; private set; } = false;
@@ -55,7 +63,14 @@ namespace StandardLibrary.Models
 
         public virtual object Clone() => throw new NotSupportedException(NotSupportedExceptionMessage);
         
-        public virtual void Dispose() { OnDisposing(); IsDisposed = true; OnDisposed(); }
+        public void Dispose() { OnDisposing(); IsDisposed = true; OnDisposed(); }
+
+        /// <summary>
+        /// 
+        ///     IDisposable realisation 
+        /// 
+        /// </summary>
+        protected virtual void DisposeE() { }
 
         public virtual string ToString(string format, IFormatProvider formatProvider) =>
             throw new NotSupportedException(NotSupportedExceptionMessage);
