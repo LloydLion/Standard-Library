@@ -64,7 +64,7 @@ namespace StandardLibrary.Functions
             return Result;
         }
 
-        public bool HasNextStep() => steps.Count - 1 > iterator;
+        public bool HasNextStep() => steps.Count - 1 >= iterator;
 
         private FunctionStepperStepResult<TResult> DoStep(int i)
         {
