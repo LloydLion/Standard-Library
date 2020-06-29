@@ -12,6 +12,11 @@ namespace StandardLibrary.Interfaces
     /// </summary>
     public interface INumberIndicatedObject
     {
+        /// <summary>
+        /// 
+        ///     Numerical indicator of object
+        /// 
+        /// </summary>
         int Id { get; }
     }
 }

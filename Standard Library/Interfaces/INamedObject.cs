@@ -11,7 +11,13 @@ namespace StandardLibrary.Interfaces
     /// 
     /// </summary>
     public interface INamedObject : IPrivateNamedObject
-    {
+    { 
+        /// <summary>
+        /// 
+        ///     Reaname named object
+        /// 
+        /// </summary>
+        /// <param name="newName">Object new name</param>
         void Rename(string newName);
     }
 }

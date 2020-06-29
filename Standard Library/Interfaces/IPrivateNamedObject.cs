@@ -12,6 +12,11 @@ namespace StandardLibrary.Interfaces
     /// </summary>
     public interface IPrivateNamedObject
     {
+        /// <summary>
+        /// 
+        ///     Name of named object
+        /// 
+        /// </summary>
         string Name { get; }
     }
 }

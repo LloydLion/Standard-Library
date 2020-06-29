@@ -11,6 +11,11 @@ namespace StandardLibrary.Interfaces
     /// </summary>
     public interface IStringIndicatedObject
     {
+        /// <summary>
+        /// 
+        ///     Id of indicated object
+        /// 
+        /// </summary>
         string StringId { get; }
     }
 }
