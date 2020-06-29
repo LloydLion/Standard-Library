@@ -60,7 +60,7 @@ namespace StandardLibrary.Functions
 		///		else false
 		///		
 		/// </summary>
-		public bool HasNextStep => steps.Count - 1 > iterator;
+		public bool HasNextStep => steps.Count - 1 >= iterator;
 
 		/// <summary>
 		/// 

@@ -19,7 +19,7 @@ namespace TestProject.Functions
 				default
 			};
 
-			for (int i = 0; r.HasNextStep(); i++)
+			for (int i = 0; r.HasNextStep; i++)
 			{
 				var srr = requestedValues[i];
 				var sr = r.DoNextStep();
@@ -39,7 +39,7 @@ namespace TestProject.Functions
 				"asdFsa"
 			};
 
-			for (int i = 0; r.HasNextStep(); i++)
+			for (int i = 0; r.HasNextStep; i++)
 			{
 				var srr = req[i];
 				var sr = r.DoNextStep();

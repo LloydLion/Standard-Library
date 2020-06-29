@@ -129,7 +129,12 @@ namespace TestProject.Models
                 return d;
             }
 
-            public override void Dispose()
+			public override string ToString()
+			{
+				throw new NotImplementedException();
+			}
+
+			protected override void DisposeE()
             {
                 Resource = false;
                 base.Dispose();
