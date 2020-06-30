@@ -125,13 +125,13 @@ namespace StandardLibrary.Console
         public Dictionary<string, object> Calculate(string[] args)
         {
             var dic = new Dictionary<string, object>();
-            List<int> indexL = new List<int>();
+            List<int> requiredSupportList = new List<int>();
 
             List<int> usedIndexes = new List<int>();
 
             try
             {
-                indexL.Clear();
+                requiredSupportList.Clear();
                 dic = dic.Concat(keys.Select((s, i) =>
                 {
                     if (!args.Contains("--" + s.Key))
@@ -140,19 +140,20 @@ namespace StandardLibrary.Console
                             throw new IndexOutOfRangeException("Trigger exception");
                         else
                         {
-                            indexL.Add(i);
+                            requiredSupportList.Add(i);
                             return default;
                         }
                     }
                     else
                     {
-                        usedIndexes.Add(i);
+                        usedIndexes.Add(args.ToList().IndexOf("--" + s.Key));
+                        usedIndexes.Add(usedIndexes.Last() + 1);
 
                         return new KeyValuePair<string, object>(s.Name, s.ParseFunc
                             (args[args.ToList().IndexOf("--" + s.Key) + 1]));
                     }
 
-                })).Where((s, i) => !indexL.Contains(i))
+                })).Where((s, i) => !requiredSupportList.Contains(i))
                 .ToDictionary((s) => s.Key, (s) => s.Value);
             }
             catch(IndexOutOfRangeException)
@@ -164,9 +165,9 @@ namespace StandardLibrary.Console
             {
                 dic = dic.Concat(positions.Select((s, i) =>
                 {
-                    if (args.Length - 1 >= s.Position)
+                    if (args.Length - 1 >= s.Position && !usedIndexes.Contains(s.Position))
                     {
-                        usedIndexes.Add(i);
+                        usedIndexes.Add(s.Position);
 
                         return new KeyValuePair<string, object>
                             (s.Name, s.ParseFunc(args[s.Position]));
@@ -178,11 +179,12 @@ namespace StandardLibrary.Console
                             throw new IndexOutOfRangeException("Trigger exception");
                         else
                         {
-                            indexL.Add(i);
+                            requiredSupportList.Add(i);
                             return default;
                         }
                     }
-                })).Where((s, i) => !indexL.Contains(i) && !usedIndexes.Contains(i))
+                })).Where((s, i) => dic.Count - 1 >= i || (!requiredSupportList.Contains(i) &&
+                    usedIndexes.Where((q) => q == positions[i - dic.Count].Position).Count() == 1))
                 .ToDictionary((s) => s.Key, (s) => s.Value);
             }
             catch (IndexOutOfRangeException)
@@ -192,8 +194,12 @@ namespace StandardLibrary.Console
             }
 
             dic = dic.Concat
-                (flags.Select((s) => new KeyValuePair<string, object>
-                (s.Name, args.Contains("--" + s.Key)))
+                (flags.Select((s) =>
+                {
+                    if(args.Contains("--" + s.Key)) usedIndexes.Add(args.ToList().IndexOf("--" + s.Key));
+                    return new KeyValuePair<string, object>
+                        (s.Name, args.Contains("--" + s.Key));
+                })
                 .Where((s, i) => usedIndexes.Contains(i)))
                 .ToDictionary((s) => s.Key, (s) => s.Value);
 

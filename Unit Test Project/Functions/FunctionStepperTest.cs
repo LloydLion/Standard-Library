@@ -23,36 +23,38 @@ namespace TestProject.Functions
 			{
 				var srr = requestedValues[i];
 				var sr = r.DoNextStep();
-				Assert.IsTrue(sr.IsVoid ? srr == default : sr.Result == srr, $"iteration:{i}, srr:{srr}, sr.R:{sr.Result}");
+				Assert.IsTrue(sr.IsVoid || sr.Result == srr, 
+					$"iteration:{i}, srr:{srr}, sr.R:{(sr.IsVoid ? null : (object)sr.Result)}");			
 			}
 		}
 
 		[TestMethod]
 		public void StepperVoidTest()
 		{
-			var str = "asdFsa";
 			var r = Foo2(924, "asdFsa");
 
 			var req = new string[]
 			{
-				"asdFsa",
-				"asdFsa"
+				"925asdFsa",
+				"926asdfsaasdfsaasdfsa926",
+				"926ASDFSAASDFSAASDFSA926"
 			};
 
 			for (int i = 0; r.HasNextStep; i++)
 			{
 				var srr = req[i];
-				var sr = r.DoNextStep();
-				Assert.IsTrue(str == srr, $"iteration:{i}, srr:{srr}, str:{str}");
+				r.DoNextStep();
+				Assert.IsTrue(testResource == srr, $"iteration:{i}, srr:{srr}, testResource:{testResource}");
 			}
 		}
 
+		private string testResource;
 
 
-		private FunctionStepper<(int, string)> Foo(int s, string a)
+		private FunctionStepper<(int, string)>.IFunctionStepperExecutor Foo(int s, string a)
 		{
 			var step = new FunctionStepper<(int, string)>();
-
+			
 			step.CreateSteps(() =>
 			{
 				return (s, a);
@@ -72,23 +74,29 @@ namespace TestProject.Functions
 			return step;
 		}
 
-		private FunctionStepper<StepperVoid> Foo2(int s, string a)
+		private FunctionStepper<StepperVoid>.IFunctionStepperExecutor Foo2(int s, string a)
 		{
 			var step = new FunctionStepper<StepperVoid>();
 
 			step.CreateSteps(() =>
 			{
-				a += (a);
-				a += s;
-				s += 102;
+				testResource = ++s + a;
+				a = a.ToLower();
+
 				return default;
 			},
 			
 			() =>
 			{
-				s++;
-				a += s;
-				a += a;
+				testResource = ++s + a + a + a + s++;
+
+				return default;
+			},
+			
+			() =>
+			{
+				testResource = testResource.ToUpper();
+
 				return default;
 			});
 

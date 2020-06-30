@@ -137,7 +137,6 @@ namespace TestProject.Models
 			protected override void DisposeE()
             {
                 Resource = false;
-                base.Dispose();
             }
         }
     }

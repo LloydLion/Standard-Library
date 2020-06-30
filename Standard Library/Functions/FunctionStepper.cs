@@ -60,7 +60,8 @@ namespace StandardLibrary.Functions
 		///		else false
 		///		
 		/// </summary>
-		public bool HasNextStep => steps.Count - 1 >= iterator;
+		public bool HasNextStep => steps.Count - 1/*Max index*/ >
+			iterator - 1/*Current step *interator is next step index*/;
 
 		/// <summary>
 		/// 
@@ -356,7 +357,7 @@ namespace StandardLibrary.Functions
 			{
 				this.result = result;
 				IsVoid = false;
-				isAsync = true;
+				isAsync = false;
 			}
 
 			/// <summary>

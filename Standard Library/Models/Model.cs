@@ -63,7 +63,7 @@ namespace StandardLibrary.Models
 
         public virtual object Clone() => throw new NotSupportedException(NotSupportedExceptionMessage);
         
-        public void Dispose() { OnDisposing(); IsDisposed = true; OnDisposed(); }
+        public void Dispose() { OnDisposing(); DisposeE(); IsDisposed = true; OnDisposed(); }
 
         /// <summary>
         /// 
