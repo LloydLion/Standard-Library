@@ -39,7 +39,7 @@ namespace StandardLibrary.ProcessManagment
         public ConsoleProcessEngine(ProcessStartInfo processStartInfo)
         {
 
-            if (processStartInfo.UseShellExecute == true &&
+            if (processStartInfo.UseShellExecute == false &&
                 processStartInfo.RedirectStandardInput == true &&
                 processStartInfo.RedirectStandardOutput == true)
             {
@@ -86,17 +86,14 @@ namespace StandardLibrary.ProcessManagment
                 if (startCount > 0)
                     builder.Append(g);
 
-                if (builder.ToString().EndsWith(startMark)) startCount++;
-                else if (builder.ToString().EndsWith(endMark)) startCount--;
+                if (builder.ToString().EndsWith(endMark)) startCount--;
+                else if (builder.ToString().EndsWith(startMark)) startCount++;
             }
             while (startCount != 0);
 
             var s = builder.ToString();
 
-            if (s.Length - s.Reverse().ToList().IndexOf('\n') - 4 < 2) return "";
-
-            s = s.Substring(2, s.Length - s.Reverse().ToList().IndexOf('\n') - 4);
-
+            s = s.Substring(0, s.Length - endMark.Length);
 
             return s;
         }
@@ -132,7 +129,7 @@ namespace StandardLibrary.ProcessManagment
         {
             process.Start();
             Running = true;
-        }
+       }
 
         /// <summary>
         /// 
@@ -159,7 +156,7 @@ namespace StandardLibrary.ProcessManagment
             CheckProcessStade();
             WriteCommand(stopCommand);
 
-            return Task.Run(() => { process.WaitForExit(waitTime); Running = false; }).GetAwaiter();
+           return Task.Run(() => { process.WaitForExit(waitTime); Running = false; }).GetAwaiter();
         }
 
         /// <summary>

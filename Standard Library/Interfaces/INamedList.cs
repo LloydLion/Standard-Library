@@ -9,7 +9,7 @@ namespace StandardLibrary.Interfaces
     ///     Interface for NamedList<T>
     /// 
     /// </summary>
-    public interface INamedList<T> : INamedCollection<T>, IList<T> where T : INamedObject
+    public interface INamedList<T> : INamedCollection<T>, IList<T> where T : IPrivateNamedObject
     {
 
     }

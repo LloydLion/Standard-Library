@@ -5,7 +5,7 @@ using System.Text;
 
 namespace StandardLibrary.Interfaces
 {
-    public interface INamedCollection<T> : ICollection<T>, IReadOnlyCollection<T>, ICollection where T : INamedObject
+    public interface INamedCollection<T> : ICollection<T>, IReadOnlyCollection<T>, ICollection where T : IPrivateNamedObject
     {
         /// <summary>
         /// 
@@ -21,5 +21,14 @@ namespace StandardLibrary.Interfaces
         /// 
         /// </summary>
         T this[string index] { get; set; }
+
+        /// <summary>
+        /// 
+        ///     Checks the sheet for the item with the given name
+        /// 
+        /// </summary>
+        /// <param name="name">Name for check</param>
+        /// <returns>Result of checking</returns>
+        bool ContainsItemWithEqualsName(string name);
     }
 }

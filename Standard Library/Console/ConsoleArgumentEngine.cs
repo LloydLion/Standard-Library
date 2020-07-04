@@ -163,6 +163,7 @@ namespace StandardLibrary.Console
 
             try
             {
+                requiredSupportList.Clear();
                 dic = dic.Concat(positions.Select((s, i) =>
                 {
                     if (args.Length - 1 >= s.Position && !usedIndexes.Contains(s.Position))
@@ -183,7 +184,7 @@ namespace StandardLibrary.Console
                             return default;
                         }
                     }
-                })).Where((s, i) => dic.Count - 1 >= i || (!requiredSupportList.Contains(i) &&
+                })).Where((s, i) => dic.Count - 1 >= i || (!requiredSupportList.Contains(i - dic.Count) &&
                     usedIndexes.Where((q) => q == positions[i - dic.Count].Position).Count() == 1))
                 .ToDictionary((s) => s.Key, (s) => s.Value);
             }
@@ -193,15 +194,19 @@ namespace StandardLibrary.Console
                     ParameterIsNotHasAllPositionParametersExcceptionMessage);
             }
 
-            dic = dic.Concat
-                (flags.Select((s) =>
-                {
-                    if(args.Contains("--" + s.Key)) usedIndexes.Add(args.ToList().IndexOf("--" + s.Key));
-                    return new KeyValuePair<string, object>
+
+            requiredSupportList.Clear();
+            dic = dic.Concat(flags.Select((s) =>
+            {
+                if (args.Contains("--" + s.Key))
+                    usedIndexes.Add(args.ToList().IndexOf("--" + s.Key));
+                
+
+                return new KeyValuePair<string, object>
                         (s.Name, args.Contains("--" + s.Key));
-                })
-                .Where((s, i) => usedIndexes.Contains(i)))
-                .ToDictionary((s) => s.Key, (s) => s.Value);
+            })
+            .Where((s, i) => usedIndexes.Contains(i)))
+            .ToDictionary((s) => s.Key, (s) => s.Value);
 
             return dic;
         }
