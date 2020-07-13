@@ -11,8 +11,8 @@
     <RepositoryType>GitHub (git)</RepositoryType>
     <Authors>LloydLion</Authors>
     <Company />
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <FileVersion>2.0.0.0</FileVersion>
+    <AssemblyVersion>2.0.0.3</AssemblyVersion>
+    <FileVersion>2.0.0.3</FileVersion>
     <Version>2.0.0</Version>
     <PackageProjectUrl>https://github.com/LloydLion/Standard-Library</PackageProjectUrl>
   </PropertyGroup>
