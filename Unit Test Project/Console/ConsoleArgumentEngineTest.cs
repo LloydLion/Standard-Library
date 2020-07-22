@@ -138,7 +138,7 @@ namespace TestProject.Console
 			{
 				engine.Calculate(args);
 			}
-			catch (ArgumentException)
+			catch (ConsoleArgumentEngine.RequiredParametersNotFoundException)
 			{
 				return;
 			}
