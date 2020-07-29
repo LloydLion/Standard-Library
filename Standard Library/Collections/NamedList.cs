@@ -11,7 +11,7 @@ namespace StandardLibrary.Collections
     ///     List Collection for named objects
     /// 
     /// </summary>
-    public class NamedList<T> : List<T>, INamedList<T> where T : IPrivateNamedObject  
+    public class NamedList<T> : ListBase<T>, INamedList<T> where T : IPrivateNamedObject  
     {
         public T this[string index] { get => GetElementByName(index);
             set { var tmp = this.Select((s) => s.Name == index ? value : s).ToArray();
