@@ -17,10 +17,21 @@ namespace StandardLibrary.Collections
             set { var tmp = this.Select((s) => s.Name == index ? value : s).ToArray();
                 this.Clear(); this.AddRange(tmp); } }
 
-        public T GetElementByName(string Name) =>
+		public override T this[int index]
+        {
+            get => base[index]; 
+            
+            set
+            {
+                if (ContainsItemWithEqualsName(value.Name)) throw new InvalidOperationException("Item with equals name already exist");
+                base[index] = value;
+            }
+        }
+
+		public T GetElementByName(string Name) =>
             this.Where((s) => s.Name == Name).Single();
 
-        public new void Add(T item)
+        public override void Add(T item)
 		{
 			if (ContainsItemWithEqualsName(item.Name)) 
             {

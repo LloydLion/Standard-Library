@@ -52,6 +52,10 @@ namespace TestProject.Collections
 
 			var el = new NamedElement();
 			el.Rename("dsa");
+
+			var el2 = new NamedElement();
+			el2.Rename("dsa");
+
 			t.Add(el);
 
 			try
@@ -60,7 +64,14 @@ namespace TestProject.Collections
 			}
 			catch(InvalidOperationException)
 			{
-				return;
+				try
+				{
+					t[0] = el2;
+				}
+				catch (InvalidOperationException)
+				{
+					return;
+				}
 			}
 
 			throw new Exception("Exception has not throwed by NamedList");

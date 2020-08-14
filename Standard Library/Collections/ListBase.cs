@@ -46,7 +46,7 @@ namespace StandardLibrary.Collections
 		public virtual int FindIndex(int startIndex, Predicate<T> match) => innerList.FindIndex(startIndex, match);
 		public virtual int FindIndex(Predicate<T> match) => innerList.FindIndex(match);
 		public virtual void ForEach(Action<T> action) => innerList.ForEach(action);
-		public virtual List<T>.Enumerator GetEnumerator() => innerList.GetEnumerator();
+		public virtual Enumerator GetEnumerator() => (Enumerator)innerList.GetEnumerator();
 		public virtual List<T> GetRange(int index, int count) => innerList.GetRange(index, count);
 		public virtual int IndexOf(T item, int index, int count) => innerList.IndexOf(item, index, count);
 		public virtual int IndexOf(T item, int index) => innerList.IndexOf(item, index);
@@ -74,5 +74,58 @@ namespace StandardLibrary.Collections
 		public virtual bool TrueForAll(Predicate<T> match) => innerList.TrueForAll(match);
 		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)innerList).GetEnumerator();
 		IEnumerator<T> IEnumerable<T>.GetEnumerator() => ((IEnumerable<T>)innerList).GetEnumerator();
+
+		public class Enumerator : IEnumerator<T>, IEnumerator, IDisposable
+		{
+			private List<T>.Enumerator enumeratorBase;
+
+			public Enumerator(ListBase<T> list)
+			{
+				enumeratorBase = list.innerList.GetEnumerator();
+			}
+
+			private Enumerator(List<T>.Enumerator enumeratorBase)
+			{
+				this.enumeratorBase = enumeratorBase;
+			}
+
+			public virtual T Current => enumeratorBase.Current;
+
+			object IEnumerator.Current => ((IEnumerator)enumeratorBase).Current;
+			public virtual void Dispose() => enumeratorBase.Dispose();
+			public virtual bool MoveNext() => enumeratorBase.MoveNext();
+			public virtual void Reset() => ((IEnumerator)enumeratorBase).Reset();
+
+			
+			public static implicit operator Enumerator(List<T>.Enumerator enumerator)
+			{
+				return new Enumerator(enumerator);
+			}
+
+			public static implicit operator List<T>.Enumerator(Enumerator enumerator)
+			{
+				return enumerator.enumeratorBase;
+			}
+		}
+
+
+		public static explicit operator List<T>(ListBase<T> ts)
+		{
+			if (ts is ListBaseRealisationForListCasting) throw new InvalidCastException("Can't cast object to List<T>");
+			else return ts.innerList;
+		}
+
+		public static implicit operator ListBase<T>(List<T> l)
+		{
+			return new ListBaseRealisationForListCasting(l);
+		}
+
+
+		private sealed class ListBaseRealisationForListCasting : ListBase<T>
+		{
+			public ListBaseRealisationForListCasting() => _ = 0;
+			public ListBaseRealisationForListCasting(int capacity) : base(capacity) => _ = 0;
+			public ListBaseRealisationForListCasting(IEnumerable<T> collection) : base(collection) => _ = 0;
+		}
 	}
 }
