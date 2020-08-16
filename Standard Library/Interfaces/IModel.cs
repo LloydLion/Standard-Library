@@ -13,7 +13,8 @@ namespace StandardLibrary.Interfaces
     /// </summary>
     public interface IModel : INotifyPropertyChanging, INotifyPropertyChanged, ICloneable, 
         IDisposable, INumberIndicatedObject, IDisposedInformator, IFormattable, IPropertyFormattable, 
-        ISupportInitializeNotification
+        ISupportInitializeNotification, ISupportInitialize, IFinalizeble, IFinalizeInformator,
+        INewDisposedInformator, IInitializeInformator, IInitializebe
     {
 
     }

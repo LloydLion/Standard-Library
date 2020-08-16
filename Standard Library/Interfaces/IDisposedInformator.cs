@@ -10,7 +10,7 @@ namespace StandardLibrary.Interfaces
     ///     (implements IDisposable interface)
     ///
     /// </summary>
-    public interface IDisposedInformator
+    public interface IDisposedInformator : IDisposable
     {
         /// <summary>
         /// 
