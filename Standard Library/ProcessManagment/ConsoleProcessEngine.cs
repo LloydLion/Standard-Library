@@ -43,9 +43,11 @@ namespace StandardLibrary.ProcessManagment
                 processStartInfo.RedirectStandardInput == true &&
                 processStartInfo.RedirectStandardOutput == true)
             {
-                process = new Process();
-                process.StartInfo = processStartInfo;
-            }
+				process = new Process
+				{
+					StartInfo = processStartInfo
+				};
+			}
             else
             {
                 throw new ArgumentException(ProcessStartInfoValidationExceptionMessage, nameof(processStartInfo));
