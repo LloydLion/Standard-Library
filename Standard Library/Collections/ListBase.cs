@@ -6,6 +6,12 @@ using System.Text;
 
 namespace StandardLibrary.Collections
 {
+	/// <summary>
+	///	
+	///		Base class for list based classes
+	/// 
+	/// </summary>
+	/// <typeparam name="T">Type of elements</typeparam>
 	public abstract class ListBase<T> : IList<T>, IList, IReadOnlyList<T>
 	{
 		private readonly List<T> innerList;

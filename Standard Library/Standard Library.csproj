@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Standard_Library</RootNamespace>
+    <RootNamespace>StandardLibrary</RootNamespace>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Key.pfx</AssemblyOriginatorKeyFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>

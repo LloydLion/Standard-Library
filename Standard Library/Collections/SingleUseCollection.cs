@@ -4,6 +4,12 @@ using System.Text;
 
 namespace StandardLibrary.Collections
 {
+	/// <summary>
+	/// 
+	///		Collection where elements can be getted only one time
+	/// 
+	/// </summary>
+	/// <typeparam name="T">Type of elements</typeparam>
 	public class SingleUseCollection<T> : ListBase<T>
 	{
 		public override T this[int index]
