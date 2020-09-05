@@ -4,18 +4,40 @@ using System.Text;
 
 namespace StandardLibrary.Other.Stade
 {
+	/// <summary>
+	/// 
+	///		Standard realistaion of StadeBase<> and IStade<> with dynamic event handlers
+	/// 
+	/// </summary>
+	/// <typeparam name="TEnum">Type of enum used for Shortcut value</typeparam>
+	/// <typeparam name="TObject">Type of controled object</typeparam>
 	public class StandardStade<TEnum, TOBject> : StadeBase<TEnum, TOBject> where TEnum : Enum where TOBject : class
 	{
 		private readonly Action<TOBject, StadeSelectedEventArgs<TEnum, TOBject>> onSelect;
 		private readonly Action<TOBject, StadeDeselectedEventArgs<TEnum, TOBject>> onDeselect;
 		private TOBject ctrl;
 
+		/// <summary>
+		/// 
+		///		Inits a new StandardStade<> with given event handlers
+		/// 
+		/// </summary>
+		/// <param name="shortcut">Stade Shortcut</param>
+		/// <param name="onSelect">OnSelected event handler</param>
 		public StandardStade(TEnum shortcut, Action<TOBject, StadeSelectedEventArgs<TEnum, TOBject>> onSelect)
 		{
 			ShortcutValue = shortcut;
 			this.onSelect = onSelect;
 		}
 
+		/// <summary>
+		/// 
+		///		Inits a new StandardStade<> with given event handlers
+		/// 
+		/// </summary>
+		/// <param name="shortcut">Stade Shortcut</param>
+		/// <param name="onSelect">OnSelected event handler</param>
+		/// <param name="onDeselect">OnDeselected event handler</param>
 		public StandardStade(TEnum shortcut, Action<TOBject, StadeSelectedEventArgs<TEnum, TOBject>> onSelect, Action<TOBject, StadeDeselectedEventArgs<TEnum, TOBject>> onDeselect) : this(shortcut, onSelect)
 		{
 			this.onDeselect = onDeselect;
