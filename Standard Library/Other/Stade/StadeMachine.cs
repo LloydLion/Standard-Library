@@ -29,6 +29,9 @@ namespace StandardLibrary.Other.Stade
 		{
 			ControledObject = control;
 			AvailableStades = stades;
+
+			stades.InvokeForAll((s) => s.ControledObject = control);
+			currentStade = stades[0];
 		}
 
 
@@ -41,14 +44,11 @@ namespace StandardLibrary.Other.Stade
 		{ 
 			get => currentStade; 
 			private set 
-			{ 
-				if(currentStade.ShortcutValue.Equals(value.ShortcutValue))
-				{
-					var t = currentStade;
-					currentStade.OnDeselected(new StadeDeselectedEventArgs<TEnum, TObject>(value.ShortcutValue));
-					currentStade = value;
-					value.OnSelected(new StadeSelectedEventArgs<TEnum, TObject>(t.ShortcutValue));
-				} 
+			{
+				var t = currentStade;
+				currentStade.OnDeselected(new StadeDeselectedEventArgs<TEnum, TObject>(value.ShortcutValue));
+				currentStade = value;
+				value.OnSelected(new StadeSelectedEventArgs<TEnum, TObject>(t.ShortcutValue));
 			} 
 		}
 

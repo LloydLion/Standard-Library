@@ -21,7 +21,7 @@ namespace StandardLibrary.Data
 		///		Recomended use for each compoment in program individual saver
 		/// 
 		/// </summary>
-		public static DataSaver Global { get; private set; }
+		public static DataSaver Global { get { if (global == null) global = new DataSaver(DataLocation.UserData); return global; } }
 		public int Id { get; private set; }
 		public bool IsDisposed { get; set; }
 
@@ -36,6 +36,7 @@ namespace StandardLibrary.Data
 			}
 		}
 		private string FileLocation => $"{filesPath}{Path.DirectorySeparatorChar}{appName}{Path.DirectorySeparatorChar}__{Id}.dat";
+		public string DirectoryLocation => $"{filesPath}{Path.DirectorySeparatorChar}{appName}";
 
 
 		private static int nextId;
@@ -44,17 +45,12 @@ namespace StandardLibrary.Data
 		private StreamReader fileReader;
 		private StreamWriter fileWriter;
 		private static string appName;
+		private static DataSaver global;
 
 
 		public event DisposingEventHandler NewDisposing;
 		public event DisposedEventHandler NewDisposed;
 
-
-		static DataSaver()
-		{
-			appName = Assembly.LoadFile(Process.GetCurrentProcess().MainModule.FileName).GetName().Name;
-			Global = new DataSaver(DataLocation.UserData);
-		}
 
 		/// <summary>
 		/// 
@@ -64,13 +60,15 @@ namespace StandardLibrary.Data
 		/// <param name="location">Files location</param>
 		public DataSaver(DataLocation location)
 		{
+			if(appName == null) throw new InvalidOperationException("Application name hasn't setted. Please set app name with DataSaver.SetApplicationName method");
+
 			switch (location)
 			{
 				case DataLocation.ProgramDirectory: SetDataFilesPath("Components Data");
 					break;
-				case DataLocation.UserData: SetDataFilesPath(Environment.GetEnvironmentVariable("appdata", EnvironmentVariableTarget.User));
+				case DataLocation.UserData: SetDataFilesPath(Environment.GetEnvironmentVariable("appdata", EnvironmentVariableTarget.Process));
 					break;
-				case DataLocation.HostComputerData: SetDataFilesPath(Environment.GetEnvironmentVariable("windir", EnvironmentVariableTarget.Machine) + $"..{Path.DirectorySeparatorChar}ProgramData");
+				case DataLocation.HostComputerData: SetDataFilesPath(Environment.GetEnvironmentVariable("programdata", EnvironmentVariableTarget.Machine));
 					break;
 			}
 
@@ -137,6 +135,7 @@ namespace StandardLibrary.Data
 			var dataUnit = new DataUnit() { Key = key, Data = obj };
 			dataUnit.FinalizeObject();
 
+			if(data.ContainsKey(dataUnit.Key)) data.Remove(dataUnit.Key);
 			data.Add(dataUnit.Key, dataUnit.Data);
 
 			try
@@ -260,7 +259,11 @@ namespace StandardLibrary.Data
 			File = OpenDataFile();
 		}
 
-		private FileStream OpenDataFile() => FileC.Open($"{filesPath}{Path.DirectorySeparatorChar}{appName}{Path.DirectorySeparatorChar}__{Id}.dat", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+		private FileStream OpenDataFile()
+		{
+			if(Directory.Exists(DirectoryLocation) == false) Directory.CreateDirectory(DirectoryLocation);
+			return FileC.Open(FileLocation, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+		}
 
 		private Dictionary<string, object> ReadDataFile()
 		{
@@ -270,8 +273,9 @@ namespace StandardLibrary.Data
 
 		private string ReadDataFileRaw()
 		{
+			File.Seek(0, SeekOrigin.Begin);
 			var data = fileReader.ReadToEnd();
-			if (string.IsNullOrWhiteSpace(data)) data = "{}";
+			if(string.IsNullOrWhiteSpace(data)) data = "{}";
 			return data;
 		}
 

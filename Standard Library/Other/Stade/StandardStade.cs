@@ -24,11 +24,7 @@ namespace StandardLibrary.Other.Stade
 		/// </summary>
 		/// <param name="shortcut">Stade Shortcut</param>
 		/// <param name="onSelect">OnSelected event handler</param>
-		public StandardStade(TEnum shortcut, Action<TOBject, StadeSelectedEventArgs<TEnum, TOBject>> onSelect)
-		{
-			ShortcutValue = shortcut;
-			this.onSelect = onSelect;
-		}
+		public StandardStade(TEnum shortcut, Action<TOBject, StadeSelectedEventArgs<TEnum, TOBject>> onSelect) : this(shortcut, onSelect, (a, s) => { }) { }
 
 		/// <summary>
 		/// 
@@ -38,8 +34,10 @@ namespace StandardLibrary.Other.Stade
 		/// <param name="shortcut">Stade Shortcut</param>
 		/// <param name="onSelect">OnSelected event handler</param>
 		/// <param name="onDeselect">OnDeselected event handler</param>
-		public StandardStade(TEnum shortcut, Action<TOBject, StadeSelectedEventArgs<TEnum, TOBject>> onSelect, Action<TOBject, StadeDeselectedEventArgs<TEnum, TOBject>> onDeselect) : this(shortcut, onSelect)
+		public StandardStade(TEnum shortcut, Action<TOBject, StadeSelectedEventArgs<TEnum, TOBject>> onSelect, Action<TOBject, StadeDeselectedEventArgs<TEnum, TOBject>> onDeselect)
 		{
+			ShortcutValue = shortcut;
+			this.onSelect = onSelect;
 			this.onDeselect = onDeselect;
 		}
 

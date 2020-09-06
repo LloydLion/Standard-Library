@@ -1,8 +1,11 @@
-﻿using StandardLibrary.Interfaces;
+﻿using Newtonsoft.Json;
+using StandardLibrary.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -20,9 +23,10 @@ namespace StandardLibrary.Models
 		
 		[NonSerialized] private static int nextId = 0;
 		[NonSerialized] private int id;
-		[NonSerialized] bool isDisposed;
-		[NonSerialized] bool isInitialized;
-		[NonSerialized] bool isFinalized;
+		[NonSerialized] private bool isDisposed;
+		[NonSerialized] private bool isInitialized;
+		[NonSerialized] private bool isFinalized;
+		[NonSerialized] private bool isOpenned;
 
 
 		/// <summary>
@@ -46,10 +50,10 @@ namespace StandardLibrary.Models
 			if (!IsDisposed) Dispose();
 		}
 
-		public int Id { get => id; private set => id = value; }
-		public bool IsDisposed { get => isDisposed; private set => isDisposed = value; }
-		public bool IsInitialized { get => isInitialized; private set => isInitialized = value; }
-		public bool IsFinalized { get => isFinalized; private set => isFinalized = value; }
+		[JsonIgnore] public int Id { get => id; private set => id = value; }
+		[JsonIgnore] public bool IsDisposed { get => isDisposed; private set => isDisposed = value; }
+		[JsonIgnore] public bool IsInitialized { get => isInitialized; private set => isInitialized = value; }
+		[JsonIgnore] public bool IsFinalized { get => isFinalized; private set => isFinalized = value; }
 
 
 		public event PropertyChangingEventHandler PropertyChanging;
@@ -74,8 +78,19 @@ namespace StandardLibrary.Models
 		protected void OnPropertyChanged([CallerMemberName] string propertyName = "property name") =>
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+		protected void OpenModel()
+		{
+			isOpenned = true;
+		}
+
+		protected void CloseModel()
+		{
+			isOpenned = false;
+		}
+
 		private void OnInitialized()
 		{
+			IsInitialized = true;
 			Initialized?.Invoke(this, EventArgs.Empty);
 			NewInitialized?.Invoke(this, EventArgs.Empty);
 		}
@@ -85,7 +100,7 @@ namespace StandardLibrary.Models
 		private void OnDisposed()
 		{
 			Disposed?.Invoke(this, EventArgs.Empty);
-			NewDisposing?.Invoke(this, EventArgs.Empty);
+			NewDisposed?.Invoke(this, EventArgs.Empty);
 		}
 
 		private void OnDisposing()
@@ -108,9 +123,11 @@ namespace StandardLibrary.Models
 		{
 			OnFinalizing();
 
+
 			PropertyChanging += (obj, args) =>
 			{
-				throw new InvalidOperationException("Object is finalized");
+				if(isOpenned == false)
+					throw new InvalidOperationException("Object is finalized");
 			};
 
 			FinalizeObjectE();
@@ -153,5 +170,24 @@ namespace StandardLibrary.Models
 		protected virtual void DisposeE() { }
 		protected virtual void FinalizeObjectE() { }
 		protected virtual void InitializeE() { }
+
+
+		protected class ModelOpenHandler : IDisposable
+		{
+			private readonly Model model;
+
+
+			public ModelOpenHandler(Model model)
+			{
+				this.model = model;
+				model.OpenModel();
+			}
+
+
+			public void Dispose()
+			{
+				model.CloseModel();
+			}
+		}
 	}
 }
