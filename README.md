@@ -4,18 +4,16 @@ Library for C# for any projects
 
 # Installation
 1. download library(from Releases)
-2. drop into your project and connect 
-3. use
-
-*some library classes use modules. if you use it download required module from releases and drop to Output Directory. 
-you mustn't connect module to project.
+2. download modules if required (from Releases)
+3. drop into your project and connect 
+4. use
 
 
 # Connected libraries
 
 This library requireds:
 
-...none?...
+Newtonsoft.JSON - <https://www.nuget.org/packages/Newtonsoft.Json/>
 
 
 # Licence
