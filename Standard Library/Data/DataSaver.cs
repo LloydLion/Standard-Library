@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using FileC = System.IO.File;
 
@@ -62,15 +63,7 @@ namespace StandardLibrary.Data
 		{
 			if(appName == null) throw new InvalidOperationException("Application name hasn't setted. Please set app name with DataSaver.SetApplicationName method");
 
-			switch (location)
-			{
-				case DataLocation.ProgramDirectory: SetDataFilesPath("Components Data");
-					break;
-				case DataLocation.UserData: SetDataFilesPath(Environment.GetEnvironmentVariable("appdata", EnvironmentVariableTarget.Process));
-					break;
-				case DataLocation.HostComputerData: SetDataFilesPath(Environment.GetEnvironmentVariable("programdata", EnvironmentVariableTarget.Machine));
-					break;
-			}
+			SetDataFilesPath(GetPathFromDataLocationEnum(location));
 
 			Init(filesPath);
 		}
@@ -257,6 +250,48 @@ namespace StandardLibrary.Data
 			File.Close();
 			FileC.Delete(FileLocation);
 			File = OpenDataFile();
+		}
+
+		private string GetPathFromDataLocationEnum(DataLocation location)
+		{
+			if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				switch (location)
+				{
+					case DataLocation.ProgramDirectory:
+						return "Components Data";
+					case DataLocation.UserData:
+						return Environment.GetEnvironmentVariable("appdata", EnvironmentVariableTarget.Process);
+					case DataLocation.HostComputerData:
+						return Environment.GetEnvironmentVariable("programdata", EnvironmentVariableTarget.Machine);
+				}
+			}
+			else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			{
+				switch(location)
+				{
+					case DataLocation.HostComputerData:
+						return "var";
+					case DataLocation.UserData:
+						return "~";
+					case DataLocation.ProgramDirectory:
+						return "data";
+				}
+			}
+			else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			{
+				switch (location)
+				{
+					case DataLocation.HostComputerData:
+						return "/Library/Application Support";
+					case DataLocation.UserData:
+						return "~";
+					case DataLocation.ProgramDirectory:
+						return "data";
+				}
+			}
+			
+			throw new InvalidProgramException("Invalod running OS. Please use DataSaver(string)");	
 		}
 
 		private FileStream OpenDataFile()
