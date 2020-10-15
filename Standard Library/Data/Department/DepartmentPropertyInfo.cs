@@ -9,6 +9,12 @@ namespace StandardLibrary.Data.Department
 		public DepartmentPropertyInfo(string name) : base(name, typeof(TProperty)) {  }
 
 		public DepartmentPropertyInfo(string name, Type target) : base(name, typeof(TProperty), target) {  }
+
+
+		public new DepartmentPropertyInfo<TProperty> AsReadonly()
+		{
+			return (DepartmentPropertyInfo<TProperty>)base.AsReadonly();
+		}
 	}
 
 
@@ -31,7 +37,7 @@ namespace StandardLibrary.Data.Department
 		{
 			TargetType = target;
 		}
-
+		
 
 		public DepartmentPropertyInfo AsReadonly()
 		{
