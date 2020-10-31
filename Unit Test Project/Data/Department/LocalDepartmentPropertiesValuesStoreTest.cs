@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StandardLibrary.Data.Department;
+using StandardLibrary.Data.Department.Modificators;
 using StandardLibrary.Models;
 using System;
 using System.Collections.Generic;
@@ -72,7 +73,7 @@ namespace TestProject.Data.Department
 
 			static TestClass()
 			{
-				testStringPropertyInfo = new DepartmentPropertyInfo<string>("TestStringProperty", typeof(TestClass)).AsReadonly();
+				testStringPropertyInfo = new DepartmentPropertyInfo<string>("TestStringProperty", typeof(TestClass)).AddModificator(new ReadonlyProperty());
 				testStringProperty2Info = new DepartmentPropertyInfo<string>("TestStringProperty", typeof(TestClass));
 			}
 
