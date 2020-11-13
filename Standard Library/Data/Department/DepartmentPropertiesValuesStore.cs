@@ -1,6 +1,7 @@
 ﻿using StandardLibrary.Interfaces;
 using StandardLibrary.Models;
 using StandardLibrary.Other;
+using StandardLibrary.TypeManagment.Security;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +14,7 @@ namespace StandardLibrary.Data.Department
 		private readonly Dictionary<DepartmentPropertyInfo, PropertyStade> values;
 		private bool tokenIsGiven;
 		private readonly bool enableSecure;
+		private AcsessTokenValidator validator;
 
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -38,7 +40,7 @@ namespace StandardLibrary.Data.Department
 			return this;
 		}
 
-		public void SetPropertyValue<T>(DepartmentPropertyInfo<T> info, T obj, DepartmentPropertiesValuesStoreControlToken token)
+		public void SetPropertyValue<T>(DepartmentPropertyInfo<T> info, T obj, AcsessToken token)
 		{
 			SetPropertyValueDirect(info, ApplySetModificators(info, obj, !enableSecure || CheckToken(token)));
 		}
@@ -53,25 +55,26 @@ namespace StandardLibrary.Data.Department
 			return ApplyGetModificators(info);
 		}
 
-		public DepartmentPropertiesValuesStoreControlToken GetToken()
+		public AcsessToken GetToken()
 		{
 			if (tokenIsGiven == true) throw new MemberAccessException("Token already generated can't generate it again");
 
 			tokenIsGiven = true;
-			return new DepartmentPropertiesValuesStoreControlToken(this);
+			var token = new AcsessToken();
+			validator = new AcsessTokenValidator(token);
+			return token;
 		}
 
 		public LocalDepartmentPropertiesValuesStore LockToken()
 		{
-			tokenIsGiven = true;
-			return this;
+			GetToken(); return this;
 		}
 
-		public bool CheckToken(DepartmentPropertiesValuesStoreControlToken token)
+		public bool CheckToken(AcsessToken token)
 		{
 			if (tokenIsGiven == false) throw new InvalidOperationException("Can't check given token. Target token hasn't generated");
 
-			return token.TargetStore == this;
+			return validator.IsValid(token);
 		}
 
 		private T ApplyGetModificators<T>(DepartmentPropertyInfo<T> info)

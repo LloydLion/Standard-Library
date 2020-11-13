@@ -2,6 +2,7 @@
 using StandardLibrary.Data.Department;
 using StandardLibrary.Data.Department.Modificators;
 using StandardLibrary.Models;
+using StandardLibrary.TypeManagment.Security;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -68,7 +69,7 @@ namespace TestProject.Data.Department
 		{
 			public static readonly DepartmentPropertyInfo<string> testStringPropertyInfo;
 			public static readonly DepartmentPropertyInfo<string> testStringProperty2Info;
-			private readonly DepartmentPropertiesValuesStoreControlToken token;
+			private readonly AcsessToken token;
 
 
 			static TestClass()
