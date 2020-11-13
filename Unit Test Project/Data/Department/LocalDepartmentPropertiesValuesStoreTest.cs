@@ -69,7 +69,7 @@ namespace TestProject.Data.Department
 		{
 			public static readonly DepartmentPropertyInfo<string> testStringPropertyInfo;
 			public static readonly DepartmentPropertyInfo<string> testStringProperty2Info;
-			private readonly AcsessToken token;
+			private readonly AccessToken token;
 
 
 			static TestClass()

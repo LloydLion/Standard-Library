@@ -34,7 +34,7 @@ namespace StandardLibrary.Data.Department
 
 
 			public LocalDepartmentPropertiesValuesStore DepartmentStore { get; } = new LocalDepartmentPropertiesValuesStore()
-				.PutProperty(PropertyValueProperty, PropertyInfoProperty, ValueStoreProperty).LockToken();
+				.PutProperty(PropertyValueProperty, PropertyInfoProperty, ValueStoreProperty);
 		}
 
 		public class OnGetOutputModel : IDepartmentPropertiesSupport
@@ -46,7 +46,7 @@ namespace StandardLibrary.Data.Department
 
 
 			public LocalDepartmentPropertiesValuesStore DepartmentStore { get; } = new LocalDepartmentPropertiesValuesStore()
-				.PutProperty(NewReturnPropertyValueProperty, NewRealPropertyValueProperty, IsChangeReturnPropertyValueProperty, IsChangeRealPropertyValueProperty).LockToken();
+				.PutProperty(NewReturnPropertyValueProperty, NewRealPropertyValueProperty, IsChangeReturnPropertyValueProperty, IsChangeRealPropertyValueProperty);
 		}
 
 
@@ -59,7 +59,7 @@ namespace StandardLibrary.Data.Department
 			public static readonly DepartmentPropertyInfo<LocalDepartmentPropertiesValuesStore> ValueStoreProperty = new DepartmentPropertyInfo<LocalDepartmentPropertiesValuesStore>("ValueStoreProperty");
 
 
-			public LocalDepartmentPropertiesValuesStore DepartmentStore { get; } = new LocalDepartmentPropertiesValuesStore().PutProperty(PropertySettableValueProperty).LockToken();
+			public LocalDepartmentPropertiesValuesStore DepartmentStore { get; } = new LocalDepartmentPropertiesValuesStore().PutProperty(PropertySettableValueProperty);
 		}
 
 		public class OnSetOutputModel : IDepartmentPropertiesSupport
@@ -68,7 +68,7 @@ namespace StandardLibrary.Data.Department
 			public static readonly DepartmentPropertyInfo<bool> IsChangePropertyValueProperty = new DepartmentPropertyInfo<bool>("IsChangePropertyValue");
 			
 
-			public LocalDepartmentPropertiesValuesStore DepartmentStore { get; } = new LocalDepartmentPropertiesValuesStore().PutProperty(NewPropertyValueProperty, IsChangePropertyValueProperty).LockToken();
+			public LocalDepartmentPropertiesValuesStore DepartmentStore { get; } = new LocalDepartmentPropertiesValuesStore().PutProperty(NewPropertyValueProperty, IsChangePropertyValueProperty);
 		}
 
 
@@ -83,7 +83,7 @@ namespace StandardLibrary.Data.Department
 
 
 			public LocalDepartmentPropertiesValuesStore DepartmentStore { get; } = new LocalDepartmentPropertiesValuesStore()
-				.PutProperty(EventArgsProperty, InvokerProperty, ValueStoreProperty, EventNameProperty, EventTypeProperty, PropertyInfoProperty).LockToken();
+				.PutProperty(EventArgsProperty, InvokerProperty, ValueStoreProperty, EventNameProperty, EventTypeProperty, PropertyInfoProperty);
 
 
 			public enum EventType
@@ -99,7 +99,7 @@ namespace StandardLibrary.Data.Department
 			public static readonly DepartmentPropertyInfo<bool> IsCancelEventInvokeProperty = new DepartmentPropertyInfo<bool>("IsCancelEventInvoke");
 
 
-			public LocalDepartmentPropertiesValuesStore DepartmentStore { get; } = new LocalDepartmentPropertiesValuesStore().PutProperty(IsCancelEventInvokeProperty).LockToken();
+			public LocalDepartmentPropertiesValuesStore DepartmentStore { get; } = new LocalDepartmentPropertiesValuesStore().PutProperty(IsCancelEventInvokeProperty);
 		}
 	}
 }

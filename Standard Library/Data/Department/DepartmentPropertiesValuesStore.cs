@@ -12,19 +12,25 @@ namespace StandardLibrary.Data.Department
 	public class LocalDepartmentPropertiesValuesStore : INotifyPropertyChanged, INotifyPropertyChanging
 	{
 		private readonly Dictionary<DepartmentPropertyInfo, PropertyStade> values;
-		private bool tokenIsGiven;
 		private readonly bool enableSecure;
-		private AcsessTokenValidator validator;
+		private readonly AccessTokenValidator validator;
 
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public event PropertyChangingEventHandler PropertyChanging;
 
 
-		public LocalDepartmentPropertiesValuesStore(bool enableSecure = true)
+		public LocalDepartmentPropertiesValuesStore(AccessToken token)
 		{
 			values = new Dictionary<DepartmentPropertyInfo, PropertyStade>();
-			this.enableSecure = enableSecure;
+			validator = new AccessTokenValidator(token);
+			enableSecure = true;
+		}
+
+		public LocalDepartmentPropertiesValuesStore()
+		{
+			values = new Dictionary<DepartmentPropertyInfo, PropertyStade>();
+			enableSecure = false;
 		}
 
 
@@ -40,7 +46,7 @@ namespace StandardLibrary.Data.Department
 			return this;
 		}
 
-		public void SetPropertyValue<T>(DepartmentPropertyInfo<T> info, T obj, AcsessToken token)
+		public void SetPropertyValue<T>(DepartmentPropertyInfo<T> info, T obj, AccessToken token)
 		{
 			SetPropertyValueDirect(info, ApplySetModificators(info, obj, !enableSecure || CheckToken(token)));
 		}
@@ -55,24 +61,9 @@ namespace StandardLibrary.Data.Department
 			return ApplyGetModificators(info);
 		}
 
-		public AcsessToken GetToken()
+		public bool CheckToken(AccessToken token)
 		{
-			if (tokenIsGiven == true) throw new MemberAccessException("Token already generated can't generate it again");
-
-			tokenIsGiven = true;
-			var token = new AcsessToken();
-			validator = new AcsessTokenValidator(token);
-			return token;
-		}
-
-		public LocalDepartmentPropertiesValuesStore LockToken()
-		{
-			GetToken(); return this;
-		}
-
-		public bool CheckToken(AcsessToken token)
-		{
-			if (tokenIsGiven == false) throw new InvalidOperationException("Can't check given token. Target token hasn't generated");
+			if(enableSecure == false) throw new InvalidOperationException("Secure mode is disabled. Can't check token");
 
 			return validator.IsValid(token);
 		}
@@ -214,7 +205,7 @@ namespace StandardLibrary.Data.Department
 		{
 			if (IsFinalized == false) throw new InvalidOperationException("Object is NOT finalized. You can't do this action before it");
 
-			store.Add(obj, new LocalDepartmentPropertiesValuesStore(enableSecure: false));
+			store.Add(obj, new LocalDepartmentPropertiesValuesStore());
 
 			foreach (var item in properties)
 			{
