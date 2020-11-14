@@ -55,8 +55,18 @@ namespace StandardLibrary.Data.Department
 		{
 			SetPropertyValueDirect(info, ApplySetModificators(info, obj, !enableSecure));
 		}
+		
+		public void SetPropertyValue(DepartmentPropertyInfo info, object obj)
+		{
+			SetPropertyValueDirect(info, ApplySetModificators(info, obj, !enableSecure));
+		}
 
 		public T GetPropertyValue<T>(DepartmentPropertyInfo<T> info)
+		{
+			return (T)ApplyGetModificators(info);
+		}
+		
+		public object GetPropertyValue(DepartmentPropertyInfo info)
 		{
 			return ApplyGetModificators(info);
 		}
@@ -68,9 +78,9 @@ namespace StandardLibrary.Data.Department
 			return validator.IsValid(token);
 		}
 
-		private T ApplyGetModificators<T>(DepartmentPropertyInfo<T> info)
+		private object ApplyGetModificators(DepartmentPropertyInfo info)
 		{
-			T returnValue = GetPropertyValueDirect(info);
+			object returnValue = GetPropertyValueDirect(info);
 			var mods = info.GetModificators();
 
 			foreach (var mod in mods)
@@ -83,18 +93,18 @@ namespace StandardLibrary.Data.Department
 				var output = mod.OnGet(input);
 
 				if(output.DepartmentStore.GetPropertyValue(DepartmentPropertyModificator.OnGetOutputModel.IsChangeReturnPropertyValueProperty) == true)
-					returnValue = (T)output.DepartmentStore.GetPropertyValue(DepartmentPropertyModificator.OnGetOutputModel.NewReturnPropertyValueProperty);
+					returnValue = output.DepartmentStore.GetPropertyValue(DepartmentPropertyModificator.OnGetOutputModel.NewReturnPropertyValueProperty);
 
 				if(output.DepartmentStore.GetPropertyValue(DepartmentPropertyModificator.OnGetOutputModel.IsChangeRealPropertyValueProperty) == true)
-					SetPropertyValue(info, (T)output.DepartmentStore.GetPropertyValue(DepartmentPropertyModificator.OnGetOutputModel.NewRealPropertyValueProperty));
+					SetPropertyValue(info, output.DepartmentStore.GetPropertyValue(DepartmentPropertyModificator.OnGetOutputModel.NewRealPropertyValueProperty));
 			}
 
 			return returnValue;
 		}
 
-		private T ApplySetModificators<T>(DepartmentPropertyInfo<T> info, T value, bool hasValidToken)
+		private object ApplySetModificators(DepartmentPropertyInfo info, object value, bool hasValidToken)
 		{
-			T returnValue = value;
+			object returnValue = value;
 			var mods = info.GetModificators();
 
 			foreach (var mod in mods)
@@ -109,15 +119,15 @@ namespace StandardLibrary.Data.Department
 				var output = mod.OnSet(input);
 
 				if(output.DepartmentStore.GetPropertyValue(DepartmentPropertyModificator.OnSetOutputModel.IsChangePropertyValueProperty))
-					returnValue = (T)output.DepartmentStore.GetPropertyValue(DepartmentPropertyModificator.OnSetOutputModel.NewPropertyValueProperty);
+					returnValue = output.DepartmentStore.GetPropertyValue(DepartmentPropertyModificator.OnSetOutputModel.NewPropertyValueProperty);
 			}
 
 			return returnValue;
 		}
 
-		private T GetPropertyValueDirect<T>(DepartmentPropertyInfo<T> info) => (T)values[info].Value;
+		private object GetPropertyValueDirect(DepartmentPropertyInfo info) => values[info].Value;
 
-		private void SetPropertyValueDirect<T>(DepartmentPropertyInfo<T> info, T value)
+		private void SetPropertyValueDirect(DepartmentPropertyInfo info, object value)
 		{
 			OnPropertyChanging(info);
 			values[info].Value = value;

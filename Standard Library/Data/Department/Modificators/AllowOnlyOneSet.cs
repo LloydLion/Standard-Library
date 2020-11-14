@@ -8,7 +8,7 @@ namespace StandardLibrary.Data.Department.Modificators
 	public class AllowOnlyOneSet : DepartmentPropertyModificator
 	{
 		private readonly ReadonlyProperty support = new ReadonlyProperty();
-		private List<LocalDepartmentPropertiesValuesStore> isGettedAcsees = new List<LocalDepartmentPropertiesValuesStore>();
+		private readonly List<LocalDepartmentPropertiesValuesStore> isGettedAcsees = new List<LocalDepartmentPropertiesValuesStore>();
 
 
 		public override Type[] TargetTypes => null;
