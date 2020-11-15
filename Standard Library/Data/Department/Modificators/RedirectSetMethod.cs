@@ -21,7 +21,7 @@ namespace StandardLibrary.Data.Department.Modificators
 		{
 			redirectMethod.Invoke((T)input.DepartmentStore.GetPropertyValue(OnSetInputModel.PropertySettableValueProperty));
 
-			var model = new OnSetOutputModel();
+			var model = base.OnSet(input);
 			model.DepartmentStore.SetPropertyValue(OnSetOutputModel.IsChangePropertyValueProperty, true);
 			model.DepartmentStore.SetPropertyValue(OnSetOutputModel.NewPropertyValueProperty,
 				input.DepartmentStore.GetPropertyValue(OnSetInputModel.ValueStoreProperty).GetPropertyValue(input.DepartmentStore.GetPropertyValue(OnSetInputModel.PropertyInfoProperty)));

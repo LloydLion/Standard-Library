@@ -12,17 +12,30 @@ namespace StandardLibrary.Data.Department
 
 		public virtual OnGetOutputModel OnGet(OnGetInputModel input)
 		{
-			return new OnGetOutputModel();
+			var model = new OnGetOutputModel();
+
+			model.DepartmentStore.SetPropertyValue(OnGetOutputModel.IsChangeRealPropertyValueProperty, false);
+			model.DepartmentStore.SetPropertyValue(OnGetOutputModel.IsChangeReturnPropertyValueProperty, false);
+
+			return model;
 		}
 
 		public virtual OnSetOutputModel OnSet(OnSetInputModel input)
 		{
-			return new OnSetOutputModel();
+			var model = new OnSetOutputModel();
+
+			model.DepartmentStore.SetPropertyValue(OnSetOutputModel.IsChangePropertyValueProperty, false);
+
+			return model;
 		}
 
 		public virtual OnEventOutputModel OnEvent(OnEventInputModel input)
 		{
-			return new OnEventOutputModel();
+			var model = new OnEventOutputModel();
+
+			model.DepartmentStore.SetPropertyValue(OnEventOutputModel.IsCancelEventInvokeProperty, false);
+
+			return model;
 		}
 
 
@@ -59,7 +72,8 @@ namespace StandardLibrary.Data.Department
 			public static readonly DepartmentPropertyInfo<LocalDepartmentPropertiesValuesStore> ValueStoreProperty = new DepartmentPropertyInfo<LocalDepartmentPropertiesValuesStore>("ValueStoreProperty");
 
 
-			public LocalDepartmentPropertiesValuesStore DepartmentStore { get; } = new LocalDepartmentPropertiesValuesStore().PutProperty(PropertySettableValueProperty);
+			public LocalDepartmentPropertiesValuesStore DepartmentStore { get; } = new LocalDepartmentPropertiesValuesStore()
+				.PutProperty(PropertySettableValueProperty, PropertyCurrentValueProperty, HasValidTokenProperty, PropertyInfoProperty, ValueStoreProperty);
 		}
 
 		public class OnSetOutputModel : IDepartmentPropertiesSupport

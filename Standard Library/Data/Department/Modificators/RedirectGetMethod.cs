@@ -19,7 +19,7 @@ namespace StandardLibrary.Data.Department.Modificators
 
 		public override OnGetOutputModel OnGet(OnGetInputModel input)
 		{
-			var ret = new OnGetOutputModel();
+			var ret = base.OnGet(input);
 			ret.DepartmentStore.SetPropertyValue(OnGetOutputModel.IsChangeReturnPropertyValueProperty, true);
 			ret.DepartmentStore.SetPropertyValue(OnGetOutputModel.NewReturnPropertyValueProperty, redirectMethod.Invoke());
 

@@ -38,14 +38,7 @@ namespace TestProject.Data.Department
 				obj.SetValue();
 				Assert.AreEqual(obj.TestStringProperty, "123");
 
-				try
-				{
-					obj.DepartmentStore.GetToken();
-				}
-				catch(MemberAccessException)
-				{
-					return;
-				}
+				return;
 			}
 
 			throw new Exception("Exception hasn't catched and throwed, but must");
@@ -69,7 +62,7 @@ namespace TestProject.Data.Department
 		{
 			public static readonly DepartmentPropertyInfo<string> testStringPropertyInfo;
 			public static readonly DepartmentPropertyInfo<string> testStringProperty2Info;
-			private readonly AccessToken token;
+			private readonly AccessToken token = new AccessToken();
 
 
 			static TestClass()
@@ -80,11 +73,10 @@ namespace TestProject.Data.Department
 
 			public TestClass()
 			{
-				DepartmentStore = new LocalDepartmentPropertiesValuesStore();
+				DepartmentStore = new LocalDepartmentPropertiesValuesStore(token);
 				DepartmentStore.PutProperty(testStringPropertyInfo);
 				DepartmentStore.PutProperty(testStringProperty2Info);
 
-				token = DepartmentStore.GetToken();
 				TestStringProperty = "321";
 				TestStringProperty2 = "#321";
 			}

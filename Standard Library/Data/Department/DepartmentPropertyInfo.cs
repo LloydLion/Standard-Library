@@ -37,7 +37,7 @@ namespace StandardLibrary.Data.Department
 			Name = name;
 			PropertyType = value;
 			TargetType = typeof(object);
-			if(token != null) validator = new AccessTokenValidator(token);
+			if(token is null) validator = new AccessTokenValidator(token);
 		}
 
 		protected DepartmentPropertyInfo(string name, Type value, Type target, AccessToken token = null) : this(name, value, token)

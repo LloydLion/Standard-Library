@@ -11,13 +11,14 @@ namespace StandardLibrary.Data.Department.Modificators
 
 		public override OnSetOutputModel OnSet(OnSetInputModel input)
 		{
-			if(input.DepartmentStore.GetPropertyValue(OnSetInputModel.HasValidTokenProperty))
+			if (input.DepartmentStore.GetPropertyValue(OnSetInputModel.HasValidTokenProperty) == false)
 			{
-				throw new MemberAccessException("You need to have the VALID DepartmentPropertiesValuesStoreControlToken to acsees to set method of this property.\r\n" +
-					"You are can't get it if you are not owner of the LocalDepartmentPropertiesValuesStore");
+				throw new MemberAccessException("You need to have the VALID DepartmentPropertiesValuesStoreControlToken to acsees to set method of this property");
 			}
-
-			return new OnSetOutputModel();
+			else
+			{
+				return base.OnSet(input);
+			}
 		}
 	}
 }

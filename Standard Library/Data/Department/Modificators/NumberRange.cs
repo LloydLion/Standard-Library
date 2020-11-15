@@ -28,7 +28,7 @@ namespace StandardLibrary.Data.Department.Modificators
 			decimal current = (decimal)input.DepartmentStore.GetPropertyValue(OnSetInputModel.PropertySettableValueProperty);
 			decimal newVal = Math.Max(Math.Min(current, max), min);
 
-			OnSetOutputModel model = new OnSetOutputModel();
+			OnSetOutputModel model = base.OnSet(input);
 
 			if(current != newVal)
 			{
