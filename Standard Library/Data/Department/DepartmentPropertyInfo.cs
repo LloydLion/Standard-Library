@@ -8,15 +8,23 @@ namespace StandardLibrary.Data.Department
 {
 	public class DepartmentPropertyInfo<TProperty> : DepartmentPropertyInfo
 	{
-		public DepartmentPropertyInfo(string name) : base(name, typeof(TProperty)) {  }
+		public DepartmentPropertyInfo(string name, AccessToken token = null) : base(name, typeof(TProperty), token) {  }
 
-		public DepartmentPropertyInfo(string name, Type target) : base(name, typeof(TProperty), target) {  }
+		public DepartmentPropertyInfo(string name, Type target, AccessToken token = null) : base(name, typeof(TProperty), target, token) {  }
 
 
-		public new DepartmentPropertyInfo<TProperty> AddModificator(DepartmentPropertyModificator modificator, AccessToken token = null)
+		public DepartmentPropertyInfo<TProperty> AddModificator(AccessToken token = null, params DepartmentPropertyModificator[] modificators)
 		{
-			return (DepartmentPropertyInfo<TProperty>)base.AddModificator(modificator, token);
+			foreach (var mod in modificators)
+			{
+				AddModificator(mod, token);
+			}
+
+
+			return this;
 		}
+
+		public new DepartmentPropertyInfo<TProperty> AddModificator(DepartmentPropertyModificator modificator, AccessToken token = null) => base.AddModificator(modificator, token) as DepartmentPropertyInfo<TProperty>;
 	}
 
 
@@ -37,7 +45,7 @@ namespace StandardLibrary.Data.Department
 			Name = name;
 			PropertyType = value;
 			TargetType = typeof(object);
-			if(token is null) validator = new AccessTokenValidator(token);
+			if(token != null) validator = new AccessTokenValidator(token);
 		}
 
 		protected DepartmentPropertyInfo(string name, Type value, Type target, AccessToken token = null) : this(name, value, token)
@@ -54,7 +62,7 @@ namespace StandardLibrary.Data.Department
 		{
 			if(!(validator?.IsValid(token) ?? true)) throw new MemberAccessException("Can't apply this modificator. Access token is invlaid. Access deined");
 
-			if (modificator.TargetTypes == null || modificator.TargetTypes.Contains(TargetType))
+			if (modificator.TargetTypes == null || modificator.TargetTypes.Contains(PropertyType))
 			{
 				modificators.Add(modificator);
 				return this;

@@ -4,14 +4,14 @@ using System.Text;
 
 namespace StandardLibrary.Data.Department.Modificators
 {
-	public class RedirectSetMethod<T> : DepartmentPropertyModificator
+	public class RedirectSetMethod : DepartmentPropertyModificator
 	{
-		private readonly Action<T> redirectMethod;
+		private readonly Action<object> redirectMethod;
 
 		public override Type[] TargetTypes => null;
 
 
-		public RedirectSetMethod(Action<T> redirectMethod)
+		public RedirectSetMethod(Action<object> redirectMethod)
 		{
 			this.redirectMethod = redirectMethod;
 		}
@@ -19,7 +19,7 @@ namespace StandardLibrary.Data.Department.Modificators
 
 		public override OnSetOutputModel OnSet(OnSetInputModel input)
 		{
-			redirectMethod.Invoke((T)input.DepartmentStore.GetPropertyValue(OnSetInputModel.PropertySettableValueProperty));
+			redirectMethod.Invoke(input.DepartmentStore.GetPropertyValue(OnSetInputModel.PropertySettableValueProperty));
 
 			var model = base.OnSet(input);
 			model.DepartmentStore.SetPropertyValue(OnSetOutputModel.IsChangePropertyValueProperty, true);

@@ -4,15 +4,15 @@ using System.Text;
 
 namespace StandardLibrary.Data.Department.Modificators
 {
-	public class ConditionalSet<T> : DepartmentPropertyModificator
+	public class ConditionalSet : DepartmentPropertyModificator
 	{
-		private readonly Predicate<T> predicate;
+		private readonly Predicate<object> predicate;
 
 
 		public override Type[] TargetTypes => null;
 
 		
-		public ConditionalSet(Predicate<T> predicate)
+		public ConditionalSet(Predicate<object> predicate)
 		{
 			this.predicate = predicate;
 		}
@@ -20,7 +20,7 @@ namespace StandardLibrary.Data.Department.Modificators
 
 		public override OnSetOutputModel OnSet(OnSetInputModel input)
 		{
-			if(predicate.Invoke((T)input.DepartmentStore.GetPropertyValue(OnSetInputModel.PropertyCurrentValueProperty)) == true)
+			if(predicate.Invoke(input.DepartmentStore.GetPropertyValue(OnSetInputModel.PropertySettableValueProperty)) == false)
 			{
 				var model = base.OnSet(input);
 				model.DepartmentStore.SetPropertyValue(OnSetOutputModel.IsChangePropertyValueProperty, true);

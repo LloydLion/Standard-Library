@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Reflection;
 using System.Text;
 
 namespace StandardLibrary.Data.Department.Modificators
@@ -25,16 +27,15 @@ namespace StandardLibrary.Data.Department.Modificators
 
 		public override OnSetOutputModel OnSet(OnSetInputModel input)
 		{
-			decimal current = (decimal)input.DepartmentStore.GetPropertyValue(OnSetInputModel.PropertySettableValueProperty);
+			decimal current = ((IConvertible)input.DepartmentStore.GetPropertyValue(OnSetInputModel.PropertySettableValueProperty) ?? 0).ToDecimal(new NumberFormatInfo());
 			decimal newVal = Math.Max(Math.Min(current, max), min);
 
 			OnSetOutputModel model = base.OnSet(input);
 
-			if(current != newVal)
-			{
-				model.DepartmentStore.SetPropertyValue(OnSetOutputModel.IsChangePropertyValueProperty, true);
-				model.DepartmentStore.SetPropertyValue(OnSetOutputModel.NewPropertyValueProperty, newVal);
-			}
+			model.DepartmentStore.SetPropertyValue(OnSetOutputModel.IsChangePropertyValueProperty, true);
+			model.DepartmentStore.SetPropertyValue(OnSetOutputModel.NewPropertyValueProperty,
+				((IConvertible)newVal).ToType(input.DepartmentStore.GetPropertyValue(OnSetInputModel.PropertyInfoProperty).PropertyType, new NumberFormatInfo()));
+
 
 			return model;
 		}

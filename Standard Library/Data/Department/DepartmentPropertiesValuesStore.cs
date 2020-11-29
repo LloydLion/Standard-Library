@@ -61,9 +61,31 @@ namespace StandardLibrary.Data.Department
 			SetPropertyValueDirect(info, ApplySetModificators(info, obj, !enableSecure));
 		}
 
+		public LocalDepartmentPropertiesValuesStore InitPropertyWithValue(DepartmentPropertyInfo info, object obj)
+		{
+			if(enableSecure == true) throw new InvalidOperationException("Can't Init the property. Please secure version of this method: " +
+				"InitPropertyWithValue(DepartmentPropertyInfo, object, AccessToken)");
+
+			SetPropertyValueDirect(info, obj);
+			values[info].Inited = true;
+
+			return this;
+		}
+
+		public LocalDepartmentPropertiesValuesStore InitPropertyWithValue(DepartmentPropertyInfo info, object obj, AccessToken token)
+		{
+			if(CheckToken(token) == false) throw new MemberAccessException("You can't Init the property. It has invalid token");
+
+			SetPropertyValueDirect(info, obj);
+			values[info].Inited = true;
+
+			return this;
+		}
+
 		public T GetPropertyValue<T>(DepartmentPropertyInfo<T> info)
 		{
-			return (T)ApplyGetModificators(info);
+			var val = ApplyGetModificators(info);
+			return val == null ? default : (T)val;
 		}
 		
 		public object GetPropertyValue(DepartmentPropertyInfo info)
@@ -111,7 +133,7 @@ namespace StandardLibrary.Data.Department
 			{
 				var input = new DepartmentPropertyModificator.OnSetInputModel();
 				input.DepartmentStore.SetPropertyValue(DepartmentPropertyModificator.OnSetInputModel.PropertyCurrentValueProperty, GetPropertyValue(info));
-				input.DepartmentStore.SetPropertyValue(DepartmentPropertyModificator.OnSetInputModel.PropertySettableValueProperty, value);
+				input.DepartmentStore.SetPropertyValue(DepartmentPropertyModificator.OnSetInputModel.PropertySettableValueProperty, returnValue);
 				input.DepartmentStore.SetPropertyValue(DepartmentPropertyModificator.OnSetInputModel.HasValidTokenProperty, hasValidToken);
 				input.DepartmentStore.SetPropertyValue(DepartmentPropertyModificator.OnSetInputModel.PropertyInfoProperty, info);
 				input.DepartmentStore.SetPropertyValue(DepartmentPropertyModificator.OnSetInputModel.ValueStoreProperty, this);
@@ -179,6 +201,8 @@ namespace StandardLibrary.Data.Department
 		private class PropertyStade
 		{
 			public object Value { get; set; }
+
+			public bool Inited { get; set; }
 		}
 	}
 

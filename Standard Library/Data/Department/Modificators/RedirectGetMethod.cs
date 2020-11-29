@@ -4,14 +4,14 @@ using System.Text;
 
 namespace StandardLibrary.Data.Department.Modificators
 {
-	public class RedirectGetMethod<T> : DepartmentPropertyModificator
+	public class RedirectGetMethod : DepartmentPropertyModificator
 	{
-		private readonly Func<T> redirectMethod;
+		private readonly Func<object> redirectMethod;
 
 		public override Type[] TargetTypes => null;
 
 
-		public RedirectGetMethod(Func<T> redirectMethod)
+		public RedirectGetMethod(Func<object> redirectMethod)
 		{
 			this.redirectMethod = redirectMethod;
 		}
